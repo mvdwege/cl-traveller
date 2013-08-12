@@ -1,0 +1,27 @@
+(
+;; Planetary
+(code "As" size (0) atmosphere (0) hydrographics (0) definition "Asteroid" default-skill "Zero-G")
+(code "De" atmosphere (2 3 4 5 6 7 8 9) hydrographics (0) definition "Desert" default-skill "Survival")
+(code "Fl" atmosphere (10 11 12) hydrographics (1 2 3 4 5 6 7 8 9 10) definition "Fluid" default-skill "Hostile Environ")
+(code "Ga" size (6 7 8) atmosphere (5 6 8) hydrographics (5 6 7) definition "Garden World" default-skill "Trader")
+(code "He" size (3 4 5 9 10 11 12) atmosphere (2 4 7 9 10 11 12) hydrographics (0 1 2) definition "Hellworld" default-skill "Hostile Environ")
+(code "Ic" atmosphere (0 1) hydrographics (1 2 3 4 5 6 7 8 9 10) definition "Ice-Capped" default-skill "Vacc Suit")
+(code "Oc" size (10 11 12) hydrographics (10) definition "Ocean World" default-skill "Hi-G")
+(code "Va" atmosphere (0) definition "Vacuum" default-skill "Vacc-Suit")
+(code "Wa" size (5 6 7 8 9) hydrographics (10) definition "Water World" default-skill "Seafarer")
+;; Population
+(code "Di" population (0) government (0) law (0) tech-level (1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33) definition "Dieback")
+(code "Ba" population (0) government (0) law (0) tech-level (0) definition "Barren")
+(code "Lo" population (1 2 3) definition "Low Population" default-skill "Flyer")
+(code "Ni" population (4 5 6) definition "Non-Industrial" default-skill "Driver")
+(code "Ph" population (8) definition "Pre-High")
+(code "Hi" population (9 10 11 12) definition "High Population" default-skill "Streetwise")
+;; Economic
+(code "Pa" atmosphere (4 5 6 7 8 9) hydrographics (4 5 6 7 8) population (4 8) definition "Pre-Aricultural" default-skill "Trader")
+(code "Ag" atmosphere (4 5 6 7 8 9) hydrographics (4 5 6 7 8) population (567) definition "Agricultural" default-skill "Animals")
+(code "Na" atmosphere (0 1 2 3) hydrographics (0 1 2 3) population (6 7 8 9 10 11 12) definition "Non-Agricultural" default-skill "Survey")
+(code "Pi" atmosphere (0 1 2 4 7 9) population (7 8) definition "Pre-Industrial" default-skill "JOT")
+(code "In" atmosphere (0 1 2 4 7 9) population (9 10 11 12) definition "Industrial" default-skill "One Trade")
+(code "Po" atmosphere (2 3 4 5) hydrographics (0 1 2 3) definition "Poor" default-skill "Steward")
+(code "Pr" atmosphere (6 8) population (5 9) definition "Pre-Rich" default-skill "Craftsman")
+(code "Ri" atmosphere (6 8) population (6 7 8) definition "Rich" default-skill "One Art"))

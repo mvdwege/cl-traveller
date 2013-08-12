@@ -1,0 +1,108 @@
+(SIZE
+(("Asteroid Belt")
+("1,000 miles / 1,600 km")
+("2,000 miles / 3,200 km")
+("3.000 miles / 4,800 km")
+("4,000 miles / 6,400 km")
+("5,000 miles / 8,000 km")
+("6,000 miles / 9,600 km")
+("7,000 miles / 12,200 km")
+("8,000 miles / 13,800 km")
+("9,000 miles / 14,400 km")
+("10,000 miles / 16,000 km")
+("11,000 miles / 17,600 km")
+("12,000 miles / 19,200 km")
+("13,000 miles / 20,800 km")
+("14,000 miles / 22,400 km")
+("15,000 miles / 24,000 km"))
+
+ATMOSPHERE
+((("Vacuum") (S 3))
+(("Trace") (S 3))
+(("VThin" "Tainted") (P 1 S 2))
+(("VThin") (S 2))
+(("Thin" "Tainted") (P 1 S 1))
+(("Thin") (S 1))
+(("Standard"))
+(("Standard" "Tainted") (P 1))
+(("Dense"))
+(("Dense" "Tainted") (P 1))
+(("Exotic") (P 1))
+(("Corrosive") (C 1 P 1))
+(("Insidious") (C 2 P 1))
+(("Dense-High"))
+(("Ellipsoid"))
+(("Thin-Low")))
+
+HYDROGRAPHICS
+("Desert World."
+"10% water."
+"20% water."
+"30% water."
+"40% water."
+"50% water."
+"60% water."
+"70% water."
+"80% water."
+"90% water."
+"Water World.")
+
+POPULATION
+("unpopulated"
+"tens"
+"hundreds"
+"thousands"
+"ten thousands"
+"hundred thousands"
+"millions"
+"ten millions"
+"hundred millions"
+"billions"
+"ten billions"
+"hundred billions"
+"trillions"
+"ten trillions"
+"hundred trillions"
+"quadrillions")
+
+GOVERNMENT
+(("No Government Structure." "Family bonds predominate.")
+("Company/ Corporation." "Rule by a managerial elite.")
+("Participating Democracy." "Rule by popular vote.")
+("Self-Perpetuating Oligarchy." "Rule by a restricted minority with little or no input from the masses.")
+("Representative Democracy." "Government by proxy.")
+("Feudal Technocracy." "Governmental relationships based on mutually beneficial technical activities.")
+("Captive Government / Colony." "Rule by a leadership answerable to an outside group.")
+("Balkanization." "Rival governments compete for control.")
+("Civil Service Bureaucracy." "Rule by agencies employing individuals selected by merit.")
+("Impersonal Bureaucracy." "Rule by impersonal agencies.")
+("Charismatic Dictatorship." "Government by a single leader enjoying the confidence of the citizens.")
+("Non-Charismatic Dictatorship." "Government by the successor to a charismatic dictator.")
+("Charismatic Oligarchy." "Government by a select group, organization, or class enjoying the overwhelming confidence of the citizenry.")
+("Religious Dictatorship." "With little or no regard for the needs of the citizenry.")
+("Religious Autocracy." "Government by a single religious leader having absolute power over the citizenry.")
+("Totalitarian Oligarchy." "Government by an allpowerful minority which maintains absolute control through widespread coercion and oppression."))
+
+
+LAW
+(("No Law." "No prohibitions.")
+("Low Law." "Prohibition of WMD, Psi weapons.")
+("Low Law." "Prohibition of Portable Weapons.")
+("Low Law." "Prohibition of Acid, Fire, Gas weapons.")
+("Moderate Law." "Laser, Fusion, Plasma weapons prohibited.")
+("Moderate Law." "Prohibition of Shock, EMP, Rad, Freeze, Mag, Grav weapons.")
+("Moderate Law." "Prohibition of MachineGuns.")
+("Moderate Law." "Prohibition of Pistols.")
+("High Law." "Open display of weapons prohibited.")
+("High Law." "Weapons outside the home prohibited.")
+("Extreme Law." "Weapon possession prohibited.")
+("Extreme Law." "Regional passports required.")
+("Extreme Law." "Unrestricted invasion of privacy.")
+("Extreme Law." "Paramilitary law enforcement.")
+("Extreme Law." "Full-fledged police state.")
+("Extreme Law." "Daily life rigidly controlled.")
+("Extreme Law." "Disproportionate punishments.")
+("Extreme Law." "Legalized oppressive practices.")
+("Extreme Law." "Routinely oppressive and restrictive.")))
+
+
