@@ -144,12 +144,12 @@
 	 (setf hydrographics
 	       (make-instance 
 		'hydrographics :code
-		(if (<= (size w) 1)
+		(if (< (size w) 2)
 		    0
 		    (min 10
 			 (max 0 (- (+ (size w) (flux)) 
-				   (if (or (<= (atmosphere w) 1) 
-					   (>= (atmosphere w) 10))
+				   (if (or (< (atmosphere w) 2) 
+					   (> (atmosphere w) 9))
 				       4
 				       0)))))))))))
 
