@@ -13,6 +13,9 @@
    far-satellite
    planet))
 
+(defclass body ()
+  ((orbits)))
+
 (defclass world (body)
   ((name
     :initarg :name
@@ -147,7 +150,7 @@
 		(if (< (size w) 2)
 		    0
 		    (min 10
-			 (max 0 (- (+ (size w) (flux)) 
+			 (max 0 (- (+ (atmosphere w) (flux))
 				   (if (or (< (atmosphere w) 2) 
 					   (> (atmosphere w) 9))
 				       4
