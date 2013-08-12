@@ -117,12 +117,15 @@
 			(size (nth 2 (spectrum self)))
 			(spectral-class (nth 0 (spectrum self)))
 			(spectral-decimal (nth 1 (spectrum self))))
-		    (dolist (hz-values 
-			      (getf (getf hz-data size) spectral-class))
-		      (if (and
-			   (>= spectral-decimal (nth 0 hz-values))
-			   (<= spectral-decimal (nth 1 hz-values)))
-			  (return (nth 2 hz-values)))))))))))
+		    (if (eql size 'D)
+			0
+			(progn
+			  (dolist (hz-values 
+				    (getf (getf hz-data size) spectral-class))
+			    (if (and
+				 (>= spectral-decimal (nth 0 hz-values))
+				 (<= spectral-decimal (nth 1 hz-values)))
+				(return (nth 2 hz-values)))))))))))))
   
       
       
