@@ -1,0 +1,17 @@
+; See page 43 for explanation. Format as in habitable-zones: (size
+; (spectral-class ((lower-bound-of-spectral-decimal
+; upper-bound-of-spectral-decimal orbit) ...)) ... )
+; 
+; The chart only shows the midpoints of the spectra. I will assume
+; that anything hotter (and thus smaller) will use the next previous
+; orbit.
+; 
+; Note that some entries are impossible to roll up as homeworld stars
+; using the tables on pp. 80 and 436.
+
+(Ia (A ((0 9 4)) F ((0 5 4)) F ((6 9 5)) G ((0 4 5) (5 9 6)) K ((0 4 6) (5 9 7)) M ((0 4 8) (5 9 9)))
+    Ib (A ((0 4 1) (5 9 2)) G ((0 4 2) (5 9 4)) K ((0 4 5) (5 9 6)) M ((0 4 7) (5 9 8)))
+    II (A ((0 9 0)) F ((0 9 0)) G ((0 9 1)) K ((0 4 2) (5 9 4)) M ((0 4 5) (5 8 6) (9 9 7)))
+    III (A ((0 9 0)) G ((0 9 0)) K ((0 4 0) (5 9 1)) M ((0 4 2) (5 8 5) (9 9 6))))
+
+    
