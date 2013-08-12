@@ -126,6 +126,24 @@
 				 (>= spectral-decimal (nth 0 hz-values))
 				 (<= spectral-decimal (nth 1 hz-values)))
 				(return (nth 2 hz-values)))))))))))))
-  
-      
-      
+
+(defmethod surface-orbit ((self star))
+  (with-spectrum self
+    (with-slots (surface-orbit) self
+      (if (slot-boundp self 'surface-orbit)
+	  surface-orbit
+	  (progn
+	    (setf surface-orbit
+		  (with-open-file
+		      (stream (merge-pathnames *data* "surface-orbits"))
+		    (let ((surface-orbits (read stream))
+			  (size (nth 2 (spectrum self)))
+			  (spectral-class (nth 0 (spectrum self)))
+			  (spectral-decimal (nth 1 (spectrum self))))
+		      (dolist (surface-orbit-values
+				(getf (getf surface-orbits size) spectral-class))
+			(print surface-orbit-values)
+			(if (and
+			     (>= spectral-decimal (nth 0 surface-orbit-values))
+			     (<= spectral-decimal (nth 1 surface-orbit-values)))
+			    (return (nth 2 surface-orbit-values))))))))))))
