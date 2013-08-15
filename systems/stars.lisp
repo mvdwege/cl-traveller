@@ -3,20 +3,30 @@
 
 (defclass star (body) 
   ((spectrum :initform nil
-	     :initarg :spectrum
-	     :reader spectrum)
+	    :initarg :spectrum
+	    :reader spectrum
+	    :documentation 
+"Takes a list of the form 
+'(<spectral class> <spectral decimal> <size category>.")
    (flux :initform nil
-	 :initarg :flux)
+	 :initarg :flux
+	 :documentation 
+"The original flux rolled on generating the spectral class. Required
+if this is a primary star object, otherwise may be left nil.")
    (primary :initform nil
 	    :initarg :primary
 	    :reader primary)
    (surface-orbit)
    (habitable-zone)
-   (companion :initarg :companion)))
+   (companion :initarg :companion))
+  (:documentation 
+"Class to hold a stellar object. Like all classes in this package,
+slots left unbound in make-instance will be filled with randomly
+generated values as soon as they are read the first time."))
 
 (defmethod random-spectrum ((self star))
-  "Generates a random spectrum and saves the spectrum list and the
-Flux roll to itself. Note that this mutates the object!"
+"Generates a random spectrum and saves the spectrum list and the Flux
+roll to itself. Note that this mutates the object!"
   (setf (slot-value self 'spectrum)
 	;; Define a function to test if the rolled up spectrum-list is
 	;; valid (see p. 436).
