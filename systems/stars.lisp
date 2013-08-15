@@ -1,9 +1,6 @@
 ;;;; Generate stars and star systems
 (in-package :traveller)
 
-(defvar *spectral-class* '("O" "B" "A" "F" "G" "K" "M" "BD"))
-(defvar *stellar-size* '("Ia" "Ib" "II" "III" "IV" "V" "VI" "D"))
-
 (defclass star () 
   ((spectrum :initarg :spectrum
 	     :reader spectrum)
@@ -12,7 +9,8 @@
 	    :initarg :primary
 	    :reader primary)
    (surface-orbit)
-   (habitable-zone)))
+   (habitable-zone)
+   (companion :initarg :companion)))
 
 (defmethod random-spectrum ((self star))
   "Generates a random spectrum and saves the spectrum list and the
