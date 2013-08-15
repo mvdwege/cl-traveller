@@ -2,7 +2,8 @@
 (defpackage :traveller
   (:use :common-lisp)
   (:export :make-world-with-uwp
-	   :world))
+	   :world
+	   :star))
 
 (in-package :traveller)
 ;;; Data directory is a subdirectory of the system directory.
