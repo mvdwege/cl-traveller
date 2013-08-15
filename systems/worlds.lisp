@@ -13,9 +13,6 @@
    far-satellite
    planet))
 
-(defclass body ()
-  ((orbits)))
-
 (defclass world (body)
   ((name
     :initarg :name

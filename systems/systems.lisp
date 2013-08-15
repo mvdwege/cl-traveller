@@ -1,9 +1,12 @@
 (in-package :traveller)
 
+(defclass body ()
+  ((orbits)))
+
 (defclass system ()
   ((name)
    (mainworld)
-   (star)))
+   (primary)))
 
 (defclass map-object () 
   ((locations)
