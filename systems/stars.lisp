@@ -15,6 +15,8 @@
    (habitable-zone)))
 
 (defmethod random-spectrum ((self star))
+  "Generates a random spectrum and saves the spectrum list and the
+Flux roll to itself. Note that this mutates the object!"
   (setf (slot-value self 'spectrum)
 	;; Define a function to test if the rolled up spectrum-list is
 	;; valid (see p. 436).
