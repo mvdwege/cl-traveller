@@ -1,10 +1,12 @@
 ;;;; Generate stars and star systems
 (in-package :traveller)
 
-(defclass star () 
-  ((spectrum :initarg :spectrum
+(defclass star (body) 
+  ((spectrum :initform nil
+	     :initarg :spectrum
 	     :reader spectrum)
-   (flux :initform nil)
+   (flux :initform nil
+	 :initarg :flux)
    (primary :initform nil
 	    :initarg :primary
 	    :reader primary)
@@ -147,3 +149,13 @@ Flux roll to itself. Note that this mutates the object!"
 			     (>= spectral-decimal (nth 0 surface-orbit-values))
 			     (<= spectral-decimal (nth 1 surface-orbit-values)))
 			    (return (nth 2 surface-orbit-values))))))))))))
+
+(defmethod initialize-instance :after ((self star) &key &allow-other-keys)
+  (with-slots (spectrum flux companion primary) self
+    (unless (and spectrum flux)
+      (random-spectrum self))
+    (unless (slot-boundp self 'companion)
+      (if (>= (flux) 3)
+	  (setf companion (make-instance 'star :companion nil :primary self))
+	  (setf companion nil)))))
+      
