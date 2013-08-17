@@ -62,5 +62,3 @@
       (good (apply #'- (sort flux-dice #'>)))
       (bad (apply #'- (sort flux-dice #'<)))
       (t (apply #'- flux-dice)))))
-
-
