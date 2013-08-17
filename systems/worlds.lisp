@@ -29,13 +29,13 @@
    (starport
     :initarg :starport
     :reader starport)
-   (size)
-   (atmosphere)
-   (hydrographics)
-   (population)
-   (government)
-   (law)
-   (tech-level)
+   (size :reader size)
+   (atmosphere :reader atmosphere)
+   (hydrographics :reader hydrographics)
+   (population :reader population)
+   (government :reader government)
+   (law :reader law)
+   (tech-level :reader tech-level)
    (trade-classifications
     :accessor trade-classifications)))
 
@@ -43,7 +43,9 @@
 (defclass uwp-attribute () 
   ((code
    :initarg :code
-   :reader code)))
+   :reader code)
+   (description :reader description
+		:initform "")))
 
 (defmethod print-object ((u uwp-attribute) stream) 
   (format stream "~a" (to-ehex (code u))))
@@ -72,35 +74,34 @@
 			   ((<= r 11) (to-number "E"))
 			   (t (to-number "X"))))))))
 			   
-(defmethod starport ((w world))
+(defmethod starport :around ((w world))
   (if (slot-boundp w 'starport)
-      (to-ehex (code (slot-value w 'starport)))
+      (to-ehex (code (call-next-method)))
       (to-ehex
        (code (setf (slot-value w 'starport) (make-instance 'starport))))))
 
 ;; Size and supporting methods and classes.
 (defclass size (uwp-attribute)
-  ((diameter :reader diameter)))
+  ())
 
 (defmethod initialize-instance :after ((s size) &key)
-  (with-slots (code diameter) s
+  (with-slots (code description) s
     (if (not (slot-boundp s 'code))
 	(setf code
 	      (let ((siz (roll 2 :DM -2)))
 		(if (= siz 10)
 		    (roll 1 :DM 9)
 		    siz))))
-    (setf diameter (car (nth code (getf *uwp-definitions* 'size))))))
+    (setf description (car (nth code (getf *uwp-definitions* 'size))))))
   
-(defmethod size ((w world))
-  (if (slot-boundp w 'size)
-      (code (slot-value w 'size))
-      (code (setf (slot-value w 'size) (make-instance 'size)))))
+(defmethod size :around ((w world))
+  (if (not (slot-boundp w 'size))
+      (code (setf (slot-value w 'size) (make-instance 'size)))
+      (code (call-next-method))))
 
 ;; Atmosphere
 (defclass atmosphere (uwp-attribute)
-  ((description :reader description)
-   (effects)))
+  ((effects)))
 
 (defmethod initialize-instance :after ((a atmosphere) &key)
 	   (with-slots (code description effects) a
@@ -113,90 +114,84 @@
 		   (setf effects
 			 (pop definition))))))
 
-(defmethod atmosphere ((w world))
-  (with-slots (atmosphere) w
-    (if (slot-boundp w 'atmosphere)
-	(code atmosphere)
-	(code
-	 (setf atmosphere 
-	       (make-instance 
-		'atmosphere :code 	 
-		(let ((s (size w)))
-		  (if (= s 0)
-		      0 ; if Size=0, Atmosphere is always 0.
-		      (min 15 (max 0 (+ (flux) s)))))))))))
+(defmethod atmosphere :around ((w world))
+  (if (not (slot-boundp w 'atmosphere))
+      (code
+       (setf (slot-value w 'atmosphere)
+	     (make-instance
+	      'atmosphere :code
+	      (let ((s (size w)))
+		(if (= s 0)
+		    0 ; if Size=0, Atmosphere is always 0.
+		    (min 15 (max 0 (+ (flux) s))))))))
+      (code (call-next-method))))
+
 ;; Hydrograpics
 (defclass hydrographics (uwp-attribute)
-  ((description :reader description)))
+  ())
 
 (defmethod initialize-instance :after ((h hydrographics) &key)
 	   (with-slots (code description) h
 	     (if (slot-boundp h 'code)
 		 (setf description (nth code (getf *uwp-definitions* 'hydrographics))))))
 
-(defmethod hydrographics ((w world))
-  (with-slots (hydrographics) w
-    (if (slot-boundp w 'hydrographics)
-	(code hydrographics)
-	(code 
-	 (setf hydrographics
-	       (make-instance 
-		'hydrographics :code
-		(if (< (size w) 2)
-		    0
-		    (min 10
-			 (max 0 (- (+ (atmosphere w) (flux))
-				   (if (or (< (atmosphere w) 2) 
-					   (> (atmosphere w) 9))
-				       4
-				       0)))))))))))
+(defmethod hydrographics :around ((w world))
+  (if (not (slot-boundp w 'hydrographics))
+      (code
+       (setf (slot-value w 'hydrographics)
+	     (make-instance
+	      'hydrographics :code
+	      (if (< (size w) 2)
+		  0
+		  (min 10
+		       (max 0 (- (+ (atmosphere w) (flux))
+				 (if (or (< (atmosphere w) 2)
+					 (> (atmosphere w) 9))
+				     4
+				     0))))))))
+      (code (call-next-method))))
 
 ;; Population
 (defclass population (uwp-attribute) 
-  ((description :reader description)))
+  ())
 
-(defmethod population ((w world))
-    (with-slots (population) w
-      (if (slot-boundp w 'population)
-	  (code population)
-	  (code
-	   (setf population
-		 (make-instance
-		  'population :code
-		  (let ((pop (roll 2 :dm -2)))
-		    (if (= pop 10)
-			(roll 1 :dm 9)
-			pop))))))))
+(defmethod population :around ((w world))
+  (if (not (slot-boundp w 'population))
+      (code
+       (setf (slot-value w 'population)
+	     (make-instance
+	      'population :code
+	      (let ((pop (roll 2 :dm -2)))
+		(if (= pop 10)
+		    (roll 1 :dm 9)
+		    pop)))))
+      (code (call-next-method))))
 
 ;; Government
 (defclass government (uwp-attribute)
-  ((short-description :reader short-description)
-   (long-description :reader long-description)))
+  ((long-description :reader long-description)))
 
-(defmethod government ((w world))
-  (with-slots (government) w
-    (if (slot-boundp w 'government)
-	(code government)
-	(code
-	 (setf government
-	       (make-instance
-		'government :code
-		(max 0 (min 15 (+ (population w) (flux))))))))))
+(defmethod government :around ((w world))
+  (if (not (slot-boundp w 'government))
+      (code
+       (setf (slot-value w 'government)
+	     (make-instance
+	      'government :code
+	      (max 0 (min 15 (+ (population w) (flux)))))))
+      (code (call-next-method))))
 
 ;; Law
 (defclass law (uwp-attribute)
-  ((short-description :reader short-description)
-   (long-description :reader long-description)))
+  ((long-description :reader long-description)))
 
-(defmethod law ((w world))
-    (with-slots (law) w
-      (if (slot-boundp w 'law)
-	  (code law)
-	  (code 
-	   (setf law
-		 (make-instance
-		  'law :code
-		  (max 0 (min 18 (+ (government w) (flux))))))))))
+(defmethod law :around ((w world))
+  (if (not (slot-boundp w 'law))
+      (code
+       (setf (slot-value w 'law)
+	     (make-instance
+	      'law :code
+	      (max 0 (min 18 (+ (government w) (flux)))))))
+      (code (call-next-method))))
 
 ;; Tech Level
 (defgeneric tl-dm (world uwp-attribute))
