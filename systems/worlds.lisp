@@ -45,11 +45,6 @@
    :initarg :code
    :reader code)))
 
-(defmethod initialize-instance :after ((u uwp-attribute) &key)
-  (when (slot-boundp u 'code)
-    (with-slots (code) u
-      (setf code (to-number code)))))
-
 (defmethod print-object ((u uwp-attribute) stream) 
   (format stream "~a" (to-ehex (code u))))
 
