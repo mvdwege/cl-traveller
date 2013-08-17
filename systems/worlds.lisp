@@ -1,10 +1,13 @@
 (in-package :traveller)
 ;;; Read UWP and Trade Classification definitions.
+;; Compiler does not like defvars inside macros.
+(defvar *uwp-definitions*)
 (with-open-file (stream (merge-pathnames *data* "uwp-attributes"))
-  (defvar *uwp-definitions* (read stream)))
+  (setf *uwp-definitions* (read stream)))
 
+(defvar *trade-codes*)
 (with-open-file (stream (merge-pathnames *data* "trade-codes"))
-  (defvar *trade-codes* (read stream)))
+  (setf *trade-codes* (read stream)))
 
 (defvar *uwp-attributes* '(starport size atmosphere hydrographics population government law tech-level))
   
