@@ -110,10 +110,10 @@ that this mutates the object!"
 			  (setf spectral-decimal nil))
 			(when (eql size 'D)
 			  (setf spectral-decimal nil))
-			(list spectral-class spectral-decimal size))))))
+			(list spectral-class spectral-decimal size)))))))
       ;; If the spectrum slot is bound, we just return its value by
       ;; calling the default reader method.
-      (call-next-method)))
+  (call-next-method))
 
 (defmethod original-flux :around ((self star))
   (unless (slot-boundp self 'original-flux)
@@ -171,7 +171,7 @@ that this mutates the object!"
 
 (defmethod initialize-instance :after ((self star) &key &allow-other-keys)
   (with-slots (companion primary) self
-    (unless (slot-boundp self 'companion)
+    (unless (and (slot-boundp self 'companion) (not (slot-boundp self 'primary)))
       (if (>= (flux) 3)
 	  (setf companion (make-instance 'star :companion nil :primary self))
 	  (setf companion nil)))))
