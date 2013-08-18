@@ -3,11 +3,6 @@
 (defclass body ()
   ((orbits)))
 
-(defclass system ()
-  ((name)
-   (mainworld)
-   (primary)))
-
 (defclass map-object () 
   ((locations)
    (name :initarg :name

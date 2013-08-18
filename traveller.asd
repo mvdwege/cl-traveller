@@ -5,8 +5,8 @@
 	       (:module "systems" 
 			:depends-on ("common")
 			:components 
-			((:file "stars")
-			 (:file "worlds" :depends-on ("stars"))
+			((:file "worlds")
+			 (:file "stars" :depends-on ("worlds"))
 			 (:file "systems" :depends-on ("worlds"))))
 	       (:module "weapons" 
 			:depends-on ("common")

@@ -21,7 +21,6 @@
     :initarg :name
     :reader name)
    (primary)
-   (orbit)
    (world-type)
    (hz-variance
     :reader hz-variance)
