@@ -84,24 +84,28 @@ that this mutates the object!"
 				  (lambda ()
 				    (+
 				     (original-flux (primary self))
-				     (roll 1 :dm -1) flux-shift))
+				     (roll 1 :dm -1)
+				     flux-shift))
 				  (lambda ()
 				    (+ (flux) flux-shift))))
 			     (size-function
 			      (if (primary self)
 				  (lambda ()
 				    (+
-				     (slot-value (primary self) 'original-flux)
-				     (roll 1 :dm 2) flux-shift))
+				     (original-flux (primary self))
+				     (roll 1 :dm 2)
+				     flux-shift))
 				  (lambda () (+ (flux) flux-shift)))))
 			;; Main body. We blithely overwrite the bindings
 			;; of spectral-class and size, as we don't need
 			;; the lists anymore after we're done randomly
 			;; choosing from them.
 			(setf spectral-class
-			      (nth (setf (slot-value self 'original-flux)
-					 (funcall spectrum-function))
+			      (nth (setf flux-roll (funcall spectrum-function))
 				   spectral-class))
+			(unless (primary self)
+			  (setf (slot-value self 'original-flux)
+				(- flux-roll flux-shift)))
 			(setf size
 			      (nth (funcall size-function)
 				   (getf size spectral-class)))
@@ -171,7 +175,7 @@ that this mutates the object!"
 
 (defmethod initialize-instance :after ((self star) &key &allow-other-keys)
   (with-slots (companion primary) self
-    (unless (and (slot-boundp self 'companion) (not (slot-boundp self 'primary)))
+    (unless (and (slot-boundp self 'companion) primary)
       (if (>= (flux) 3)
 	  (setf companion (make-instance 'star :companion nil :primary self))
 	  (setf companion nil)))))
