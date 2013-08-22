@@ -20,7 +20,8 @@
   ((name
     :initarg :name
     :reader name)
-   (primary)
+   (primary :initarg primary
+	    :accessor primary)
    (world-type)
    (hz-variance
     :reader hz-variance)
