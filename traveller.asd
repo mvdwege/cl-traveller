@@ -4,8 +4,9 @@
   :components ((:file "common")
 	       (:module "systems" 
 			:depends-on ("common")
-			:components 
+			:components
 			((:file "worlds")
+			 (:file "uwp-attributes")
 			 (:file "stars" :depends-on ("worlds"))
 			 (:file "systems" :depends-on ("worlds"))))
 	       (:module "weapons" 
