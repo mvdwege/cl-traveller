@@ -246,7 +246,6 @@ attribute unbound to randomly generate its value on read."))
 							 government) collect 
 				     (to-number 
 				      (progn
-					(funcall attribute w)
 					(funcall 
 					 #'tl-dm
 					 (slot-value w attribute))))))))))))))
