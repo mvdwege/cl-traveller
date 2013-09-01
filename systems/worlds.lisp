@@ -24,7 +24,7 @@
    (world-type)
    (hz-variance
     :reader hz-variance)
-   (climate)
+   (climate :reader climate)
    (starport
     :initarg :st
     :reader starport)
@@ -40,10 +40,15 @@
     :reader government)
    (law :initarg :law
 	:reader law)
-   (tech-level :initarg :tl
-	       :reader tech-level)
+   (tech-level :initarg :tl)
    (trade-classifications
     :accessor trade-classifications)))
+
+(defmethod slot-unbound (class (w world) (slot (eql 'hz-variance)))
+  (setf (slot-value w 'hz-variance) (truncate (flux))))
+
+(defmethod slot-unbound (class (w world) (slot (eql 'climate)))
+  (setf (slot-value w 'climate) (nth (+ 1 (hz-variance w)) '("Hot" "Temperate" "Cold"))))
 
 (defmethod trade-classifications :before ((w world))
   (with-slots 'trade-classifications w
@@ -81,20 +86,14 @@
 (defclass inner-world (world) () )
 (defclass stormworld (world) () )
 
-(defmacro make-world (uwp-string &key (world-type 'world))
-"Constructor macro for a world object. Pass in a standard Traveller
-UWP string to set the UWP attribute values; use * in the UWP string to
-keep attributes unset, they will be lazily evaluated later when you
-call their reader."
+(defmacro make-world (&key (uwp "*******-*") (world-type 'world))
+"Constructor macro for a world object. Pass in a standard Traveller UWP string to set the UWP attribute values; use * in the UWP string to keep attributes unset, they will be lazily evaluated later when you call their reader. 
+
+Defaults to *******-* in order to generate a world with all slots unbound, to either use random generation or other methods to set world attributes."
   (let ((initargs '(:st :siz :atm :hyd :pop :gov :law :tl))
 	(attributes (mapcar #'(lambda (x) `(quote ,x)) *uwp-attributes*)))
-    `(make-instance (quote ,world-type) ,@(mapcan #'(lambda (x y z) (unless (equal z "*") (list x `(make-instance ,y :code (to-number ,z))))) initargs attributes (parse-uwp uwp-string)))))
+    `(make-instance (quote ,world-type) ,@(mapcan #'(lambda (x y z) (unless (equal z "*") (list x `(make-instance ,y :code (to-number ,z))))) initargs attributes (parse-uwp uwp)))))
     
-(defun make-world-with-uwp (&key name uwp (world-type 'world))
-  (destructuring-bind (st siz atm hyd pop gov law tl) 
-      (parse-uwp uwp) 
-    (make-instance world-type :name name :st st :siz siz :atm atm :hyd hyd :pop pop :gov gov :law law :tl tl)))
-
 (defmethod find-trade-codes ((w world))
   (let ((trade-codes nil)) 
     (loop for trade-code in *trade-codes* do
