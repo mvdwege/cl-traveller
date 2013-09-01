@@ -1,9 +1,7 @@
 ;;;; General utility functions for Traveller. Dice rolls, result tables etc.
 (defpackage :traveller
-  (:use :common-lisp)
-  (:export :make-world-with-uwp
-	   :world
-	   :star))
+  (:use :common-lisp))
+
 
 (in-package :traveller)
 ;;; Data directory is a subdirectory of the system directory.
