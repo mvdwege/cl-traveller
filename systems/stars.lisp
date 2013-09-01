@@ -62,7 +62,8 @@ that this mutates the object!"
 		  ((valid-spectrum-p sp-list) sp-list)
 		(setf sp-list
 		      ;; TODO Move the content of these bindings into a file?
-		      (let* ((flux-shift 6)
+		      (let* ((flux-roll nil)
+			     (flux-shift 6)
 			     (spectral-class '(OB A A F F G G K K M M M BD BD BD))
 			     (spectral-decimal (random 10))
 			     (size
