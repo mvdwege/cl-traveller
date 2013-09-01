@@ -1,7 +1,5 @@
 (in-package :traveller)
 
-(defclass body ()
-  ((orbits)))
 
 (defclass map-object () 
   ((locations)
