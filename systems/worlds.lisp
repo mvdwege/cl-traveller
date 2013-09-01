@@ -12,6 +12,9 @@
    far-satellite
    planet))
 
+(defclass body ()
+  ((orbits)))
+
 (defclass world (body)
   ((name
     :initarg :name
@@ -25,13 +28,20 @@
    (starport
     :initarg :st
     :reader starport)
-   (size :reader size)
-   (atmosphere :reader atmosphere)
-   (hydrographics :reader hydrographics)
-   (population :reader population)
-   (government :reader government)
-   (law :reader law)
-   (tech-level :reader tech-level)
+   (size :initarg :siz 
+	 :reader size)
+   (atmosphere :initarg :atm
+	       :reader atmosphere)
+   (hydrographics :initarg :hyd
+		  :reader hydrographics)
+   (population :initarg :pop
+	       :reader population)
+   (government :initarg :gov
+    :reader government)
+   (law :initarg :law
+	:reader law)
+   (tech-level :initarg :tl
+	       :reader tech-level)
    (trade-classifications
     :accessor trade-classifications)))
 
@@ -71,6 +81,15 @@
 (defclass inner-world (world) () )
 (defclass stormworld (world) () )
 
+(defmacro make-world (uwp-string &key (world-type 'world))
+"Constructor macro for a world object. Pass in a standard Traveller
+UWP string to set the UWP attribute values; use * in the UWP string to
+keep attributes unset, they will be lazily evaluated later when you
+call their reader."
+  (let ((initargs '(:st :siz :atm :hyd :pop :gov :law :tl))
+	(attributes (mapcar #'(lambda (x) `(quote ,x)) *uwp-attributes*)))
+    `(make-instance (quote ,world-type) ,@(mapcan #'(lambda (x y z) (unless (equal z "*") (list x `(make-instance ,y :code (to-number ,z))))) initargs attributes (parse-uwp uwp-string)))))
+    
 (defun make-world-with-uwp (&key name uwp (world-type 'world))
   (destructuring-bind (st siz atm hyd pop gov law tl) 
       (parse-uwp uwp) 
