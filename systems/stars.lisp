@@ -18,13 +18,13 @@
 (defclass star (body) 
   ((spectrum :initarg :spectrum
 	     :reader spectrum
-	     :documentation "Takes a list of the form '(<spectral class> <spectral decimal> <size category>.")
+	     :documentation "Takes a list of the form '(<spectral class> <spectral decimal> <size category>).")
    (surface-orbit)
    (habitable-zone)
    (companion :initarg :companion
 	      :reader companion))
   (:documentation 
-"Base class to hold a stellar object. Like all classes in this package, slots left unbound in make-instance will be filled with randomly generated values as soon as they are read the first time."))
+"Base class to hold a stellar object."))
 
 (defclass primary-star (star)
   ((companion :initarg :companion
