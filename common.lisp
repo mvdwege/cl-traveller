@@ -1,6 +1,19 @@
 ;;;; General utility functions for Traveller. Dice rolls, result tables etc.
 (defpackage :traveller
-  (:use :common-lisp))
+  (:use :common-lisp)
+  (:export 
+   :world
+   :climate
+   :starport
+   :size
+   :atmosphere
+   :hydrographics
+   :population
+   :government
+   :law
+   :tech-level
+   :uwp
+   :make-world))
 
 
 (in-package :traveller)
