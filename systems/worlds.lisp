@@ -19,8 +19,6 @@
   ((name
     :initarg :name
     :reader name)
-   (system :initarg system
-	    :accessor system)
    (world-type)
    (hz-variance
     :reader hz-variance)
