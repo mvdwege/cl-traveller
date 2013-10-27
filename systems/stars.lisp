@@ -21,19 +21,19 @@
 	     :documentation "Takes a list of the form '(<spectral class> <spectral decimal> <size category>).")
    (surface-orbit)
    (habitable-zone)
-   (companion :initarg :companion
-	      :reader companion))
+   (orbits :reader orbits))
   (:documentation 
-"Base class to hold a stellar object."))
+   "Base class to hold a stellar object."))
 
 (defclass primary-star (star)
   ((companion :initarg :companion
-	      :reader :companion)
+	      :reader companion)
    (original-flux :initarg :flux
 		  :reader original-flux
 		  :documentation
 		  "The original flux rolled on generating the spectral class. Required."
 		  )
+   (orbits :initform (make-list 20 :initial-element nil))
    (surface-orbit)
    (habitable-zone))
   (:documentation 
@@ -85,25 +85,26 @@
 	  (if (>= (flux) 3)
 	      (make-instance 'companion :primary self)))))
       
-(defclass companion (star)
+(defclass secondary-star (star)
   ((primary :initarg :primary
 	    :reader primary)
    (spectrum :initarg :spectrum
 	     :reader spectrum
 	     :documentation
 	     "Takes a list of the form '(<spectral class> <spectral decimal> <size category>.")
-   (surface-orbit))
+   (surface-orbit)
+   (companion :initarg :companion
+	      :reader companion))
   (:documentation 
-"Class to hold companion stars in a multiple star system."))
+"Class to hold secondary stars in a multiple star system."))
   
-;; Should we for whatever reason have a companion without a primary,
+;; Should we for whatever reason have a secondary without a primary,
 ;; we generate one
-(defmethod slot-unbound (class (self companion) (slot (eql 'primary)))
+(defmethod slot-unbound (class (self secondary-star) (slot (eql 'primary)))
   (let ((parent (make-instance 'primary-star)))
-    (setf (slot-value parent 'companion) self)
     (setf (slot-value self 'primary) parent)))
 
-(defmethod spectral-type ((self companion))
+(defmethod spectral-type ((self secondary-star))
   (let ((spectral-symbol (nth 
 			  (+ (original-flux (primary self)) 
 			     (roll 1 :dm -1) 
@@ -117,15 +118,17 @@
 	  (random 10)))
      nil)))
 
-(defmethod stellar-size ((self companion) spectral-symbol)
+(defmethod stellar-size ((self secondary-star) spectral-symbol)
   (with-slots (spectrum) self
     (if (eql spectral-symbol 'BD)
-	nil
+	(progn
+	  (change-class self 'brown-dwarf)
+	  nil)
 	(nth 
 	 (+ (original-flux (primary self)) (roll 1 :dm 2) *flux-shift*) 
 	 (getf *size-table* spectral-symbol)))))
     
-(defmethod original-flux ((self companion))
+(defmethod original-flux ((self secondary-star))
   (original-flux (primary self)))
    
 (defun valid-spectrum-p (spectrum-list)
@@ -192,4 +195,19 @@
 			   (<= spectral-decimal (nth 1 surface-orbit-values)))
 			  (return (nth 2 surface-orbit-values)))))))))))
 
-      
+;;; Special types of secondary-stars
+(defclass close-star (secondary-star) () )
+(defclass near-star (secondary-star) () )
+(defclass far-star (secondary-star) () )
+;; All secondary star types may have a companion, except a companion,
+;; so we set the slot to nil. Neither do companions have orbits of
+;; themselves.
+(defclass companion (secondary-star) 
+  ((companion :initform nil)
+   (orbits :initform nil)))
+
+;; Companions also set the companion slot of their parent.
+(defmethod slot-unbound (class (self companion) (slot (eql 'primary)))
+  (let ((parent (make-instance 'primary-star)))
+    (setf (slot-value parent 'companion) self)
+    (setf (slot-value self 'primary) parent)))
