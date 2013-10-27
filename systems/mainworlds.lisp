@@ -9,7 +9,7 @@
 ;; Worlds, stars and gas giants all derive from 'body in order to have
 ;; an 'orbits slot and reader.
 (defclass body () 
-  (orbits :reader orbits))
+  ((orbits :reader orbits)))
 
 ;;; World class and methods
 ;;;
