@@ -14,7 +14,7 @@
 	(make-instance 'population :code (max 0 (roll 2 :dm -6)))))
 
 ;;; Gas Giants
-(defclass gas-giant  ()
+(defclass gas-giant (body)
     ((size)))
 
 (defclass large-gas-giant (gas-giant) () )
