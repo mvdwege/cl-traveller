@@ -1,25 +1,31 @@
 (in-package :traveller)
-
+;;; Generic definitions
 (defvar *trade-codes*)
 (with-open-file (stream (merge-pathnames *data* "trade-codes"))
   (setf *trade-codes* (read stream)))
 
 (defvar *uwp-attributes* '(starport size atmosphere hydrographics population government law tech-level))
-  
-;;; World class and methods
-(defvar world-types
-  '(close-satellite
-   far-satellite
-   planet))
 
-(defclass world ()
+;; Worlds, stars and gas giants all derive from 'body in order to have
+;; an 'orbits slot and reader.
+(defclass body () 
+  (orbits :reader orbits))
+
+;;; World class and methods
+;;;
+;;; The base class 'world is by definition the mainworld of a
+;;; system. Other worlds are subclasses or Gas Giants (an entirely
+;;; different hierarchy)
+(defclass world (body)
   ((name
     :initarg :name
     :reader name)
-   (world-type)
+   (world-type
+    :reader world-type)
    (hz-variance
     :reader hz-variance)
-   (climate :reader climate)
+   (climate 
+    :reader climate)
    (starport
     :initarg :st
     :reader starport)
@@ -40,10 +46,18 @@
     :accessor trade-classifications)))
 
 (defmethod slot-unbound (class (w world) (slot (eql 'hz-variance)))
-  (setf (slot-value w 'hz-variance) (truncate (flux))))
+  (setf (slot-value w 'hz-variance) (truncate (/ (flux) 3))))
 
 (defmethod slot-unbound (class (w world) (slot (eql 'climate)))
   (setf (slot-value w 'climate) (nth (+ 1 (hz-variance w)) '("Hot" "Temperate" "Cold"))))
+
+(defmethod slot-unbound (class (w world) (slot (eql 'world-type)))
+  (setf (slot-value w 'world-type)
+	(let ((flux-roll (flux)))
+	  (cond
+	    ((or (= flux-roll -5) (= flux-roll -4)) 'far-satellite)
+	    ((or (= flux-roll -6) (= flux-roll -3)) 'close-satellite)
+	    (t 'planet)))))
 
 (defmethod trade-classifications :before ((w world))
   (with-slots 'trade-classifications w
