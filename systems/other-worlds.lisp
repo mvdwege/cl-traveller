@@ -21,4 +21,5 @@
 (defclass small-gas-giant (gas-giant) () )
 (defclass ice-giant (gas-giant) () )
 (defclass brown-dwarf (gas-giant secondary-star) 
-  ((size :initform (make-instance 'size :code 24))) )
+  ((size :initform (make-instance 'size :code 24))
+   (spectrum :initform '(BD nil nil))))
