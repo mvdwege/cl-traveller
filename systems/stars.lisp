@@ -15,7 +15,7 @@
 ;; 6 to index into the *spectral-type-table* and the *size-table*.
 (defvar *flux-shift* 6)
 
-(defclass star (body) 
+(defclass star ()
   ((spectrum :initarg :spectrum
 	     :reader spectrum
 	     :documentation "Takes a list of the form '(<spectral class> <spectral decimal> <size category>).")
@@ -79,7 +79,7 @@
     (spectrum self)
     original-flux))
 
-(defmethod slot-unbound (class (self primary-star) (slot (eql 'companion)))
+(defmethod slot-unbound (class (self star) (slot (eql 'companion)))
   (with-slots (companion) self
     (setf companion
 	  (if (>= (flux) 3)
@@ -125,6 +125,8 @@
 	 (+ (original-flux (primary self)) (roll 1 :dm 2)) 
 	 (getf *size-table* spectral-symbol)))))
     
+(defmethod original-flux ((self companion))
+  (original-flux (primary self)))
    
 (defun valid-spectrum-p (spectrum-list)
   ;; Function to test if the rolled up spectrum-list is valid (see

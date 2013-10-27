@@ -12,10 +12,7 @@
    far-satellite
    planet))
 
-(defclass body ()
-  ((orbits)))
-
-(defclass world (body)
+(defclass world ()
   ((name
     :initarg :name
     :reader name)
@@ -62,35 +59,16 @@
 (defun parse-uwp (uwp-string) 
   (loop for char across (remove #\- uwp-string) collect (string char)))  
 
-(defclass planet (world) 
-  ((world-type :initform "Planet")) )
-(defclass close-satellite (world) 
-  ((world-type :initform "Close Satellite")) )
-(defclass far-satellite (world) 
-  ((world-type :initform "Far Satellite")) )
-(defclass hospitable (world) () )
-(defclass planetoids (world)
-  ((size
-    :initform (make-instance 'size :code 0))
-   (atmosphere 
-    :initform (make-instance 'size :code 0))
-   (hydrographics
-    :initform (make-instance 'size :code 0))))
-(defclass iceworld (world) () )
-(defclass radworld (world) () )
-(defclass inferno (world) () )
-(defclass bigworld (world) () )
-(defclass worldlet (world) () )
-(defclass inner-world (world) () )
-(defclass stormworld (world) () )
-
-(defmacro make-world (&key (uwp "*******-*") (world-type 'world))
+(defmacro make-world (&key (uwp "*******-*") (world-type `'world))
 "Constructor macro for a world object. Pass in a standard Traveller UWP string to set the UWP attribute values; use * in the UWP string to keep attributes unset, they will be lazily evaluated later when you call their reader. 
 
 Defaults to *******-* in order to generate a world with all slots unbound, to either use random generation or other methods to set world attributes."
   (let ((initargs '(:st :siz :atm :hyd :pop :gov :law :tl))
 	(attributes (mapcar #'(lambda (x) `(quote ,x)) *uwp-attributes*)))
-    `(make-instance (quote ,world-type) ,@(mapcan #'(lambda (x y z) (unless (equal z "*") (list x `(make-instance ,y :code (to-number ,z))))) initargs attributes (parse-uwp uwp)))))
+    `(make-instance ,world-type
+		    ,@(mapcan #'(lambda (x y z) 
+				  (unless (equal z "*") 
+				    (list x `(make-instance ,y :code (to-number ,z))))) initargs attributes (parse-uwp uwp)))))
     
 (defmethod find-trade-codes ((w world))
   (let ((trade-codes nil)) 
