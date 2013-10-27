@@ -15,13 +15,12 @@
 ;; 6 to index into the *spectral-type-table* and the *size-table*.
 (defvar *flux-shift* 6)
 
-(defclass star ()
+(defclass star (body)
   ((spectrum :initarg :spectrum
 	     :reader spectrum
 	     :documentation "Takes a list of the form '(<spectral class> <spectral decimal> <size category>).")
    (surface-orbit)
-   (habitable-zone)
-   (orbits :reader orbits))
+   (habitable-zone))
   (:documentation 
    "Base class to hold a stellar object."))
 
