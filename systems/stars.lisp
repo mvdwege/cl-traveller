@@ -122,7 +122,7 @@
     (if (eql spectral-symbol 'BD)
 	nil
 	(nth 
-	 (+ (original-flux (primary self)) (roll 1 :dm 2)) 
+	 (+ (original-flux (primary self)) (roll 1 :dm 2) *flux-shift*) 
 	 (getf *size-table* spectral-symbol)))))
     
 (defmethod original-flux ((self companion))
