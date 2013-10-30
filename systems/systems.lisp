@@ -8,7 +8,6 @@
   (let ((my-primary (make-instance 'primary-star)))
     (dolist (potential-secondary '(close-star near-star far-star))
       (when (>= (flux) 3)
-	(format t "Generating ~a" potential-secondary)
 	(let* ((secondary 
 		(make-instance potential-secondary :primary my-primary))
 	       (secondary-orbit (orbit self secondary))
