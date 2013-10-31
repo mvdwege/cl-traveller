@@ -9,7 +9,9 @@
 ;; Worlds, stars and gas giants all derive from 'body in order to have
 ;; an 'orbits slot and reader.
 (defclass body () 
-  ((orbits :reader orbits)))
+  ((orbits 
+    :initform nil
+    :reader orbits)))
 
 ;;; World class and methods
 ;;;
@@ -105,3 +107,7 @@ Defaults to *******-* in order to generate a world with all slots unbound, to ei
 
 (defmethod default-skills ((w world)) 
   )
+
+;; Mainworld class. Essentially the same as world, but a different
+;; type eases dispatching.
+(defclass mainworld (world) () )
