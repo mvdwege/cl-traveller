@@ -105,10 +105,12 @@
 
 (defmethod spectral-type ((self secondary-star))
   (let ((spectral-symbol (nth 
-			  (+ (original-flux (primary self)) 
-			     (roll 1 :dm -1) 
-			     *flux-shift*) 
-	*spectral-type-table*)))
+			  (min
+			   (- (length *spectral-type-table*) 1)
+			   (+ (original-flux (primary self)) 
+			      (roll 1 :dm -1) 
+			      *flux-shift*))
+			  *spectral-type-table*)))
     (values
      (list
       spectral-symbol
@@ -123,9 +125,12 @@
 	(progn
 	  (change-class self 'brown-dwarf)
 	  nil)
-	(nth 
-	 (+ (original-flux (primary self)) (roll 1 :dm 2) *flux-shift*) 
-	 (getf *size-table* spectral-symbol)))))
+	(let ((size-table (getf *size-table* spectral-symbol)))
+	  (nth 
+	   (min
+	    (- (length size-table) 1)
+	    (+ (original-flux (primary self)) (roll 1 :dm 2) *flux-shift*)) 
+	   size-table)))))
     
 (defmethod original-flux ((self secondary-star))
   (original-flux (primary self)))
