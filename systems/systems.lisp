@@ -18,7 +18,15 @@
 	  (setf (nth secondary-orbit (orbits my-primary)) secondary))))
     (setf (slot-value self 'primary) my-primary)))
       
-;; Determine orbits of any secondary stars.
+;; The orbit function takes a system argument which is superfluous for
+;; secondary stars and satellites, but vital for planets and gas
+;; giants, which calculate their orbit based on the system primary.
+(defgeneric orbit (system body)
+  (:documentation "Generate the correct orbital position for a celestial body"))
+
+;; Determine orbits of any secondary stars. Note that we do not use
+;; the star in the function itself, it's only in the lambda list for
+;; dispatching purposes.
 (defmethod orbit ((system system) (star close-star))
   (roll 1 :dm -1))
 
