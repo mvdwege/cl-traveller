@@ -41,6 +41,10 @@
 (defmethod orbit (primary (star far-star))
   (roll 1 :dm 11))
 
+;; In practice this method will never be called directly; it is here to
+;; abstract out the common function of finding the position of the gas
+;; giant in the system. The subclasses will call it using
+;; call-next-method.
 (defmethod orbit ((primary body) (gas-giant gas-giant))
   (or
    (position gas-giant (orbits primary))
@@ -68,27 +72,8 @@
   (truncate (max 0 (- (roll 1) 3))))
 
 (defmethod slot-unbound (class (system system) (slot (eql 'gas-giants)))
-  (let ((number-of-gas-giants (number-of-gas-giants)))
-    (loop repeat number-of-gas-giants do 
-	 (let ((gas-giant (make-instance 'gas-giant)))
-	   (size gas-giant)
-	   (if (typep gas-giant 'small-gas-giant)
-	       ;; Every other Small Gas Giant is an Ice
-	       ;; Giant. Mathematically this the same as generating an
-	       ;; Ice Giant if there is an odd number of Small Gas
-	       ;; Giants already in the system.
-	       (if (oddp 
-		    (count-if 
-		     #'(lambda (body) (typep body 'small-gas-giant)) 
-		     (orbits (primary system))))
-		   (change-class gas-giant 'ice-giant)))
-	   (setf (nth (orbit (primary system) gas-giant) 
-		      (orbits (primary system))) 
-		 gas-giant))))
-  ;; We generated the gas giants and put them in their orbits. Now we
-  ;; gather them back and assign them to the gas-giants slot.
-  (setf (slot-value system 'gas-giants) 
-	(remove-if-not 
-	 (lambda (body) (typep body 'gas-giant)) 
-	 (orbits (primary system)))))
-	       
+  (setf 
+   (slot-value system 'gas-giants)
+   (loop repeat (number-of-gas-giants) collect (make-instance 'gas-giant))))
+
+
