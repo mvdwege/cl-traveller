@@ -15,7 +15,7 @@
 
 ;;; Gas Giants
 (defclass gas-giant (body)
-    ((size)))
+    ((size :reader size)))
 
 (defclass large-gas-giant (gas-giant) () )
 (defclass small-gas-giant (gas-giant) () )
@@ -23,3 +23,15 @@
 (defclass brown-dwarf (gas-giant secondary-star) 
   ((size :initform (make-instance 'size :code 24))
    (spectrum :initform '(BD nil nil))))
+
+;; (defmethod size :around ((self gas-giant))
+;;   (code (call-next-method)))
+
+(defmethod slot-unbound (class (self gas-giant) (slot (eql 'size)))
+  (let ((random-size (+ (roll 2) 19)))
+    (if (<= random-size 22)
+	(change-class self 'small-gas-giant)
+	(change-class self 'large-gas-giant))
+    (setf (slot-value self 'size) (make-instance 'size :code random-size))))
+
+(define-condition gas-giant-not-subclassed (error) () )
