@@ -15,7 +15,8 @@
 
 ;;; Gas Giants
 (defclass gas-giant (body)
-    ((size :reader size)))
+    ((size :reader size)
+     (orbits :initform (make-list (roll 1 :dm -1)))))
 
 (defclass large-gas-giant (gas-giant) () )
 (defclass small-gas-giant (gas-giant) () )
@@ -34,4 +35,4 @@
 	(change-class self 'large-gas-giant))
     (setf (slot-value self 'size) (make-instance 'size :code random-size))))
 
-(define-condition gas-giant-not-subclassed (error) () )
+

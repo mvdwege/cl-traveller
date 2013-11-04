@@ -7,17 +7,17 @@
 (defvar *uwp-attributes* '(starport size atmosphere hydrographics population government law tech-level))
 
 ;; Worlds, stars and gas giants all derive from 'body in order to have
-;; an 'orbits slot and reader.
+;; an 'orbits slot and reader and the applicable utility methods.
 (defclass body () 
   ((orbits 
     :initform nil
     :reader orbits)))
 
+(defmethod last-orbit ((body body))
+  (- (length (orbits body)) 1))
+
 ;;; World class and methods
 ;;;
-;;; The base class 'world is by definition the mainworld of a
-;;; system. Other worlds are subclasses or Gas Giants (an entirely
-;;; different hierarchy)
 (defclass world (body)
   ((name
     :initarg :name
