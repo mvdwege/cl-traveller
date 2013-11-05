@@ -159,3 +159,8 @@
 	    (setf potential-orbit 
 		  (closest-free-orbit star gas-giant potential-orbit)))
 	(setf (nth potential-orbit (orbits star)) gas-giant)))))
+
+(defmethod mainworldp ((body body))
+  (some #'(lambda (x) (if (typep x 'mainworld) mainworld)) 
+	(delete nil (copy-list (orbits body)))))
+
