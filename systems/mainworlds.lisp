@@ -111,3 +111,8 @@ Defaults to *******-* in order to generate a world with all slots unbound, to ei
 ;; Mainworld class. Essentially the same as world, but a different
 ;; type eases dispatching.
 (defclass mainworld (world) () )
+(defclass asteroids (planetoids mainworld) () )
+
+(defmethod trade-classifications :around ((mw mainworld))
+  (if (some #'(lambda (x) (string= x "As")) (call-next-method))
+      (change-class mw 'asteroids)))
