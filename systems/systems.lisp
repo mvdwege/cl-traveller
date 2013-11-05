@@ -102,7 +102,7 @@
   (position nil (orbits primary) :start orbital-position))
 
 (defmethod first-free-inner-orbit ((primary body) (body ice-giant) orbital-position)
-  (position nil (orbits primary) :from-end t :end orbital-position :start (+ 1(habitable-zone primary))))
+  (position nil (orbits primary) :from-end t :end orbital-position :start (+ 1 (habitable-zone primary))))
 
 (defmethod closest-free-orbit ((primary body) (body body) orbital-position)
   (+
@@ -159,5 +159,3 @@
 	    (setf potential-orbit 
 		  (closest-free-orbit star gas-giant potential-orbit)))
 	(setf (nth potential-orbit (orbits star)) gas-giant)))))
-
-	      
