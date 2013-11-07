@@ -13,6 +13,12 @@
   (setf (slot-value w 'population)
 	(make-instance 'population :code (max 0 (roll 2 :dm -6)))))
 
+(defclass bigworld (world) () )
+
+(defmethod slot-unbound (class (bigworld bigworld) (slot (eql 'size)))
+  (setf (slot-value bigworld 'size)
+	(make-instance 'size :code 
+		       (do ((size 0 (roll 2 :dm 7))) ((>= size 11) size) ()))))
 ;;; Gas Giants
 (defclass gas-giant (body)
     ((size :reader size)
