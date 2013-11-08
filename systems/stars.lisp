@@ -43,7 +43,7 @@
 ;; code to blow up.
 (defmethod spectral-type ((self primary-star))
   (let* ((flux-roll (flux))
-	 (spectral-symbol (nth (+ (flux) *flux-shift*) *spectral-type-table*)))
+	 (spectral-symbol (nth (+ flux-roll *flux-shift*) *spectral-type-table*)))
     (values 
      (list spectral-symbol
 	   (random 10))
