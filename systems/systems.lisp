@@ -153,14 +153,23 @@
       ;; Calculate orbit and place gas giant
       (let* ((star (car stars))
 	     (potential-orbit (orbit star gas-giant)))
-	;; Occupied orbit?
-	(if (nth potential-orbit (orbits star))
+	;; Orbit occupied by another body? (If we get the same orbit
+	;; back in two calls, we already exist there)
+	(if (and
+	     (nth potential-orbit (orbits star))
+	     (not (= (orbit star gas-giant) potential-orbit)))
 	;; Yes, find closest free orbit
 	    (setf potential-orbit 
 		  (closest-free-orbit star gas-giant potential-orbit)))
 	(setf (nth potential-orbit (orbits star)) gas-giant)))))
 
-(defmethod mainworld-in-orbitp ((body body))
-  (some #'(lambda (x) (if (typep x 'mainworld) body)) 
-	(delete nil (copy-list (orbits body)))))
-
+(defmethod find-body ((primary body) (body body))
+  (let ((bodies (delete nil
+			(mapcar #'(lambda (x) (if (typep x 'body) x))
+			(orbits primary)))))
+    (if (find body (orbits primary))
+	primary
+	(dolist (x bodies)
+	  (if (find-body x body)
+	      (return x))))))
+	
