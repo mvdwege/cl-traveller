@@ -22,7 +22,7 @@
 ;;; Gas Giants
 (defclass gas-giant (body)
     ((size :reader size)
-     (orbits :initform (make-list (roll 1 :dm -1)))))
+     (orbits :initform (make-list 26 :initial-element nil))))
 
 (defclass large-gas-giant (gas-giant) () )
 (defclass small-gas-giant (gas-giant) () )
