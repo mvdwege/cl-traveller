@@ -171,5 +171,6 @@
 	primary
 	(dolist (x bodies)
 	  (if (find-body x body)
-	      (return x))))))
-	
+	      (progn 
+		(return-from find-body x)))))))
+    
