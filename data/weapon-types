@@ -1,0 +1,12 @@
+(artillery
+ ((:type "Gun" :code "G" :tl 6 :range 4 :mass 9 :burden -1 :h1 t :d1 2 :hits-v1 2 :price 5000)
+  (:type "Gatling" :code "Ga" :tl 7 :range 4 :mass 40 :burden -2 :h1 t :d1 3 :hits-v1 2 :price 8000)
+  (:type "Cannon" :code "C" :tl 6 :range 6 :mass 200 :burden -4 :h1 t :d1 4 :hits-v1 2 :price 10000)
+  (:type "Autocannon" :code "aC" :tl 8 :range 6 :mass 300 :burden -4 :h1 t :d1 5 :hits-v1 3 :price 30000)))
+ long-gun
+ handgun
+ shotgun
+ machinegun
+ projector
+ designator
+ launcher)
