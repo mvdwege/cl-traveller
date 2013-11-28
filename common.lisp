@@ -17,6 +17,8 @@
 
 
 (in-package :traveller)
+(require :closer-mop)
+
 ;;; Data directory is a subdirectory of the system directory.
 (defvar *data* (merge-pathnames 
 		#P"data/" 
