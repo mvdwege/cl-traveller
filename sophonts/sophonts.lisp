@@ -20,34 +20,61 @@
     (walker walker flyphib walker walker walker walker triphib triphib aquatic diver)
     (flyer flyer flyer flyer flyer walker walker flyer flyphib diver diver)))
 
+(defvar *niche-basic*
+  '(producer producer herbivore herbivore omnivore omnivore omnivore
+    omnivore omnivore carnivore carnivore scavenger scavenger))
+
+(defvar *ecological-niche*
+  '(herbivore (grazer grazer grazer intermittent intermittent
+	       intermittent intermittent grazer grazer grazer grazer
+	       grazer filter)
+    omnivore (hunter hunter hunter hunter hunter gatherer
+	      hunter-gatherer gatherer gatherer gatherer gatherer
+	      gatherer eater)
+    carnivore (pouncer pouncer pouncer pouncer pouncer pouncer chaser
+	       chaser chaser chaser trapper siren killer)
+    scavenger (carrion-eater carrion-eatercarrion-eater hijacker
+	       hijacker hijacker intimidator intimidator intimidator
+	       intimidator intimidator reducer reducer)
+    producer (collector collector collector collector collector
+	      collector basker basker basker basker basker basker)))
+
+;;; Sophont class
 (defclass sophont-class (standard-class) 
   ((characteristics :initform (make-list 6)
 		    :initarg :characteristics)
    (characteristic-dice :initform (make-list 6 :initial-element 2)
 			:initarg :characteristic-dice)
    (homeworld :initarg :homeworld 
-	      :initform (make-world)
 	      :reader homeworld)
    (native-terrain :initarg :native-terrain
-		   :initform (flux)
 		   :reader native-terrain)))
+
+;;; Homeworld generation
+(defmethod slot-unbound (class (sophont sophont-class) (slot (eql 'homeworld)))
+  (setf (slot-value sophont slot) (make-world)))
+
+;;; Determine Native Terrain, Locomotion, and Ecological Niche.
 
 ;; Only four different conditions, so just a few ifs will do, no need
 ;; to break out method dispatch.
-(defmethod terrain-modifiers ((sophont-class sophont-class))
+(defmethod terrain-modifiers ((sophont sophont-class))
   (+
-   (if (>= (atmosphere (homeworld sophont-class)) 8)
+   (if (>= (atmosphere (homeworld sophont)) 8)
        -2
        0)
-   (if (<= (size (homeworld sophont-class)) 5)
+   (if (<= (size (homeworld sophont)) 5)
        -1
        0)
-   (if (>= (hydrographics (homeworld sophont-class)) 6)
+   (if (>= (hydrographics (homeworld sophont)) 6)
        1
        0)
-   (if (>= (hydrographics (homeworld sophont-class)) 9)
+   (if (>= (hydrographics (homeworld sophont)) 9)
        1
        0)))
+
+(defmethod slot-unbound (class (sophont sophont-class) (slot (eql 'native-terrain)))
+  (setf (slot-value sophont slot) (min 5 (max -5 (+ (flux) (terrain-modifiers sophont))))))
 
 (defmethod native-terrain :around ((sophont-class sophont-class)) 
   (string-capitalize
@@ -77,19 +104,8 @@
 
 ;; Convenience macro.
 (defmacro defsophont (name) 
-  `(progn
-     (defclass ,name (sophont) () (:metaclass sophont-class))
-     ;; ,@(mapcar #'(lambda (x y) 
-     ;; 		   `(defmethod ,x ((sophont ,name)) 
-     ;; 		      (,x (nth ,y (characteristics sophont))))) 
-     ;; 	       '(strength 
-     ;; 		 dexterity agility grace 
-     ;; 		 endurance stamina vigor
-     ;; 		 intelligence 
-     ;; 		 education training instinct
-     ;; 		 social-standing charisma caste)
-     ;; 	       '(1 2 2 2 3 3 3 4 5 5 5 6 6 6))
-     (find-class ',name)))    
+  `(defclass ,name (sophont) () (:metaclass sophont-class)))
+
 ;;; Characteristics
 
 
