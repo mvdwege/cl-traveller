@@ -1,6 +1,7 @@
 (in-package :asdf)
 
 (defsystem "traveller"
+  :depends-on ("closer-mop")
   :components ((:file "common")
 	       (:module "systems" 
 			:depends-on ("common")
@@ -18,5 +19,9 @@
 			 (:module "weapons" 
 				  :depends-on ("items")
 				  :components
-				  ((:file "weapons")))))))
+				  ((:file "weapons")))))
+	       (:module "sophonts"
+			:depends-on ("systems")
+			:components
+			((:file "sophonts")))))
 
