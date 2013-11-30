@@ -7,7 +7,33 @@
 ;;; that data. So see this as an experiment in using AMOP.
 (in-package :traveller)
 
-;;; Data tables for sophont generation
+;;; Sophont class metaobject
+(defclass sophont-class (standard-class) 
+  ((characteristics :initarg :characteristics
+		    :reader characteristics)
+   (characteristic-dice :initform (make-list 6 :initial-element 2)
+			:initarg :characteristic-dice)
+   (homeworld :initarg :homeworld 
+	      :reader homeworld)
+   (native-terrain :initarg :native-terrain
+		   :reader native-terrain
+		   :reader native-terrain-mod)
+   (locomotion :initarg :locomotion
+	       :reader locomotion)
+   (ecological-niche :initarg :ecological-niche
+		     :reader ecological-niche)))
+
+;; Keep the compiler happy. Especially SBCL insists on this method
+;; existing. We're not doing really deep MOP things, so a simple "Yes,
+;; this is supposed to be a subclass of standard-class" will suffice.
+(defmethod closer-mop:validate-superclass ((class sophont-class) (super standard-class)) 
+  t)
+
+;;; Homeworld generation
+(defmethod slot-unbound (class (sophont sophont-class) (slot (eql 'homeworld)))
+  (setf (slot-value sophont slot) (make-world)))
+
+;;; Determine Native Terrain, Locomotion, and Ecological Niche.
 (defvar *terrain-types* 
   '(mountain desert exotic rough-wood rough clear forest wetlands
   wetland-woods ocean ocean-depths))
@@ -20,7 +46,7 @@
     (walker walker flyphib walker walker walker walker triphib triphib aquatic diver)
     (flyer flyer flyer flyer flyer walker walker flyer flyphib diver diver)))
 
-(defvar *niche-basic*
+(defvar *basic-niche*
   '(producer producer herbivore herbivore omnivore omnivore omnivore
     omnivore omnivore carnivore carnivore scavenger scavenger))
 
@@ -38,23 +64,6 @@
 	       intimidator intimidator reducer reducer)
     producer (collector collector collector collector collector
 	      collector basker basker basker basker basker basker)))
-
-;;; Sophont class
-(defclass sophont-class (standard-class) 
-  ((characteristics :initform (make-list 6)
-		    :initarg :characteristics)
-   (characteristic-dice :initform (make-list 6 :initial-element 2)
-			:initarg :characteristic-dice)
-   (homeworld :initarg :homeworld 
-	      :reader homeworld)
-   (native-terrain :initarg :native-terrain
-		   :reader native-terrain)))
-
-;;; Homeworld generation
-(defmethod slot-unbound (class (sophont sophont-class) (slot (eql 'homeworld)))
-  (setf (slot-value sophont slot) (make-world)))
-
-;;; Determine Native Terrain, Locomotion, and Ecological Niche.
 
 ;; Only four different conditions, so just a few ifs will do, no need
 ;; to break out method dispatch.
@@ -74,7 +83,9 @@
        0)))
 
 (defmethod slot-unbound (class (sophont sophont-class) (slot (eql 'native-terrain)))
-  (setf (slot-value sophont slot) (min 5 (max -5 (+ (flux) (terrain-modifiers sophont))))))
+  (setf (slot-value sophont slot) 
+	(min 5 (max -5 (+ (flux) (terrain-modifiers sophont))))))
+
 
 (defmethod native-terrain :around ((sophont-class sophont-class)) 
   (string-capitalize
@@ -82,11 +93,57 @@
 	       (symbol-name
 		(nth (+ (call-next-method) 5) *terrain-types*)))))
 
-;; Keep the compiler happy. Especially SBCL insists on this method
-;; existing. We're not doing really deep MOP things, so a simple "Yes,
-;; this is supposed to be a subclass of standard-class" will suffice.
-(defmethod closer-mop:validate-superclass ((class sophont-class) (super standard-class)) 
-  t)
+(defmethod slot-unbound (class (sophont sophont-class) (slot (eql 'locomotion)))
+  (setf (slot-value sophont slot) 
+	(nth (min 10 (max 0 (+ (flux) 5 (native-terrain-mod sophont)))) 
+	     (nth (random 6) *locomotion-types*))))
+
+(defmethod slot-unbound (class (sophont sophont-class) (slot (eql 'ecological-niche)))
+  (let ((basic-niche (nth (+ (flux) 6) *basic-niche*)))
+    (setf (slot-value sophont slot) 
+	  (list basic-niche 
+		(nth (+ 
+		      (flux) 6 
+		      (native-terrain-mod sophont)) 
+		     (getf *ecological-niche* basic-niche))))))
+
+;;; Generate Characteristics
+(defvar *sophont-characteristics*
+  `(,(loop repeat 11 collect 'strength)
+     (agility agility agility agility dexterity dexterity dexterity
+     grace grace grace grace)
+     (stamina stamina stamina stamina endurance endurance endurance vigor vigor vigor vigor)
+     ,(loop repeat 11 collect 'intelligence)
+     (instinct instinct instinct instinct education education
+     education training training training training)
+     (caste caste caste social-standing social-standing
+     social-standing social-standing charisma charisma charisma
+     charisma)))
+
+(defmethod slot-unbound (class (sophont sophont-class) (slot (eql 'characteristics)))
+  (let ((dm (cond
+	      ((eql (locomotion sophont) 'flyer) -2)
+	      ((eql (locomotion sophont) 'swimmer) 2)
+	      ((eql (locomotion sophont) 'diver) 2)
+	      (t 0)))
+	(characteristics))
+    (dotimes (c 6) (push 
+		    (nth (min 10 (max 0 (+ (flux) 5 dm)))
+			 (nth c *sophont-characteristics*)) characteristics))
+    (setf (slot-value sophont slot) (nreverse characteristics))))
+    
+(defmethod genetic-profile ((sophont sophont-class))
+  (let ((clist (characteristics sophont))
+	(profile-list))
+    (dolist (c clist)
+      (push (subseq (symbol-name c) 0 1) profile-list))
+    ;; The last characteristic has two posibilities starting with a
+    ;; 'C'. If it is Caste, then the genetic profile letter (currently
+    ;; the first element of profile-liest) must be 'K' to distinguish
+    ;; it from Charisma.
+    (if (eql (car (reverse clist)) 'caste)
+	(setf (car profile-list) "K"))
+    (format nil "~{~a~}" (nreverse profile-list))))
 
 ;; Base class for sophont individuals
 (defclass sophont () 
