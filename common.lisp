@@ -17,7 +17,6 @@
 
 
 (in-package :traveller)
-(require :closer-mop)
 
 ;;; Data directory is a subdirectory of the system directory.
 (defvar *data* (merge-pathnames 
@@ -75,3 +74,7 @@
       (good (apply #'- (sort flux-dice #'>)))
       (bad (apply #'- (sort flux-dice #'<)))
       (t (apply #'- flux-dice)))))
+
+(defun flux-on (table &key (shift 5))
+  "Roll flux on a list and return the rolled item."
+  (nth (+ (flux) shift) table))
