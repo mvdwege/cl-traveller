@@ -11,8 +11,8 @@
 (defclass sophont-class (standard-class) 
   ((characteristics :initarg :characteristics
 		    :reader characteristics)
-   (characteristic-dice :initform (make-list 6 :initial-element 2)
-			:initarg :characteristic-dice)
+   (characteristic-dice :initarg :characteristic-dice
+			:reader characteristic-dice)
    (homeworld :initarg :homeworld 
 	      :reader homeworld)
    (native-terrain :initarg :native-terrain
@@ -102,10 +102,10 @@
   (let ((basic-niche (nth (+ (flux) 6) *basic-niche*)))
     (setf (slot-value sophont slot) 
 	  (list basic-niche 
-		(nth (+ 
-		      (flux) 6 
-		      (native-terrain-mod sophont)) 
-		     (getf *ecological-niche* basic-niche))))))
+		(flux-on  
+		 (getf *ecological-niche* basic-niche)
+		 :shift 6
+		 :dm (native-terrain-mod sophont))))))
 
 ;;; Generate Characteristics
 (defvar *sophont-characteristics*
@@ -119,6 +119,14 @@
      (caste caste caste social-standing social-standing
      social-standing social-standing charisma charisma charisma
      charisma)))
+
+(defvar *characteristic-values*
+  '((1 1 2 2 2 2 3 4 5 6 7 8)
+    (1 1 2 2 2 2 2 3 3 3 3 3)
+    (1 1 2 2 2 2 2 3 3 3 3 3)
+    (1 1 2 2 2 2 2 3 3 3 3 3)
+    (1 1 2 2 2 2 2 2 2 2 2 2)
+    (1 1 2 2 2 2 2 2 2 2 2 2)))
 
 (defmethod slot-unbound (class (sophont sophont-class) (slot (eql 'characteristics)))
   (let ((dm (cond
@@ -145,6 +153,23 @@
 	(setf (car profile-list) "K"))
     (format nil "~{~a~}" (nreverse profile-list))))
 
+(defmethod slot-unbound (class (sophont sophont-class) (slot (eql 'characteristic-dice)))
+  (let ((result-list))
+    (dotimes (c 6)
+      (let* ((characteristic (nth c (characteristics sophont)))
+	     (cv-column (nth c *characteristic-values*))
+	     (dm (+
+		  (if (<= c 2) (native-terrain-mod sophont) 0)
+		  (if (find 'chaser (ecological-niche sophont)) 2 0)
+		  (if (find 'pouncer (ecological-niche sophont)) -2 0)))
+	     (result (if (or
+			  (eql characteristic 'education)
+			  (eql characteristic 'training))
+			 2
+			 (flux-on cv-column :dm dm))))
+	(push result result-list)))
+    (setf (slot-value sophont slot) (nreverse result-list))))
+	
 ;; Base class for sophont individuals
 (defclass sophont () 
   ((name :accessor name
@@ -155,7 +180,6 @@
    (age :accessor age
        :initarg :age)
    (characteristics :accessor characteristics
-		    :initform (make-list 6)
 		    :initarg :characteristics))
   (:metaclass sophont-class))
 
@@ -163,6 +187,20 @@
 (defmacro defsophont (name) 
   `(defclass ,name (sophont) () (:metaclass sophont-class)))
 
-;;; Characteristics
+;;; Individual Characteristics
+(defmethod slot-unbound (class (individual sophont) (slot (eql 'characteristics)))
+  (let ((result-list))
+    (dotimes (c 6)
+      (let ((characteristic-value 0)
+	    (dice (nth c (characteristic-dice (class-of individual)))))
+	(if (>= dice 4)
+	    (progn
+	      (- dice 2)
+	      (setf characteristic-value 12)))
+	(incf characteristic-value (roll dice))
+	(push characteristic-value result-list)))
+    (setf (slot-value individual slot) (nreverse result-list))))
+
+	
 
 
