@@ -75,6 +75,9 @@
       (bad (apply #'- (sort flux-dice #'<)))
       (t (apply #'- flux-dice)))))
 
-(defun flux-on (table &key (shift 5))
+(defun flux-on (table &key (shift 5) (dm 0))
   "Roll flux on a list and return the rolled item."
-  (nth (+ (flux) shift) table))
+  (let ((lower-bound 0) (upper-bound (- (length table) 1)))
+    (nth (max lower-bound (min upper-bound
+			       (+ (flux) shift))) 
+	 table)))
