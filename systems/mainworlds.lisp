@@ -76,9 +76,14 @@
   (loop for char across (remove #\- uwp-string) collect (string char)))  
 
 (defmacro make-world (&key (uwp "*******-*") (world-type `'world))
-"Constructor macro for a world object. Pass in a standard Traveller UWP string to set the UWP attribute values; use * in the UWP string to keep attributes unset, they will be lazily evaluated later when you call their reader. 
+"Constructor macro for a world object. Pass in a standard Traveller
+UWP string to set the UWP attribute values; use * in the UWP string to
+keep attributes unset, they will be lazily evaluated later when you
+call their reader.
 
-Defaults to *******-* in order to generate a world with all slots unbound, to either use random generation or other methods to set world attributes."
+Defaults to *******-* in order to generate a world with all slots
+unbound, to either use random generation or other methods to set world
+attributes."
   (let ((initargs '(:st :siz :atm :hyd :pop :gov :law :tl))
 	(attributes (mapcar #'(lambda (x) `(quote ,x)) *uwp-attributes*)))
     `(make-instance ,world-type
