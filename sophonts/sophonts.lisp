@@ -10,6 +10,7 @@
 ;;; Sophont class metaobject
 (defclass sophont-class (standard-class) 
   ((characteristics :initarg :characteristics
+		    :initarg :genetic-profile
 		    :reader characteristics)
    (characteristic-dice :initarg :characteristic-dice
 			:reader characteristic-dice)
@@ -21,7 +22,9 @@
    (locomotion :initarg :locomotion
 	       :reader locomotion)
    (ecological-niche :initarg :ecological-niche
-		     :reader ecological-niche)))
+		     :reader ecological-niche)
+   (caste :reader caste)
+   (genders :reader genders)))
 
 ;; Keep the compiler happy. Especially SBCL insists on this method
 ;; existing. We're not doing really deep MOP things, so a simple "Yes,
@@ -89,9 +92,7 @@
 
 (defmethod native-terrain :around ((sophont-class sophont-class)) 
   (string-capitalize
-   (substitute #\Space #\-
-	       (symbol-name
-		(nth (+ (call-next-method) 5) *terrain-types*)))))
+   (symbol-to-name (nth (+ (call-next-method) 5) *terrain-types*))))
 
 (defmethod slot-unbound (class (sophont sophont-class) (slot (eql 'locomotion)))
   (setf (slot-value sophont slot) 
@@ -139,7 +140,31 @@
 		    (nth (min 10 (max 0 (+ (flux) 5 dm)))
 			 (nth c *sophont-characteristics*)) characteristics))
     (setf (slot-value sophont slot) (nreverse characteristics))))
-    
+
+;; If characteristics is set using :genetic-profile, we have to
+;; convert it to a list. If not, it has either been explicitly set as
+;; a list in the initargs, or we will trigger generation through
+;; slot-unbound.
+(defmethod characteristics :around ((sophont sophont-class))
+  (let ((characteristics (slot-value sophont 'characteristics)))
+    (when (stringp characteristics)
+      (let ((characteristics-list)
+	    (characteristics-grouped (mapcar #'remove-duplicates *sophont-characteristics*)))
+	;; Change spelling of Caste to Kaste to make it match with the
+	;; "K" in the GP string.
+	(nsubstitute 'kaste 'caste (nth 5 characteristics-grouped))
+	(dotimes (c 6)
+	  (push
+	   (find (aref characteristics c) 
+		 (nth c characteristics-grouped)
+		 :test #'(lambda (x y) 
+			   (eql x (aref (string-upcase (symbol-name y)) 0))))
+	   characteristics-list))
+	;; Revert 'Kaste' spelling back to normal.
+	(nsubstitute 'caste 'kaste characteristics-list)
+	(setf (slot-value sophont 'characteristics) (nreverse characteristics-list)))))
+  (call-next-method))
+
 (defmethod genetic-profile ((sophont sophont-class))
   (let ((clist (characteristics sophont))
 	(profile-list))
@@ -147,7 +172,7 @@
       (push (subseq (symbol-name c) 0 1) profile-list))
     ;; The last characteristic has two posibilities starting with a
     ;; 'C'. If it is Caste, then the genetic profile letter (currently
-    ;; the first element of profile-liest) must be 'K' to distinguish
+    ;; the first element of profile-list) must be 'K' to distinguish
     ;; it from Charisma.
     (if (eql (car (reverse clist)) 'caste)
 	(setf (car profile-list) "K"))
@@ -169,7 +194,15 @@
 			 (flux-on cv-column :dm dm))))
 	(push result result-list)))
     (setf (slot-value sophont slot) (nreverse result-list))))
-	
+
+;; sophont constructor
+(defmacro defsophont (&rest initargs)
+  `(make-instance 'sophont-class
+		  :direct-superclasses (list (find-class 'sophont))
+		  ,@initargs))
+
+;;; Individual sophonts
+
 ;; Base class for sophont individuals
 (defclass sophont () 
   ((name :accessor name
@@ -180,27 +213,24 @@
    (age :accessor age
        :initarg :age)
    (characteristics :accessor characteristics
-		    :initarg :characteristics))
+		    :initarg :characteristics)
+   (genetics :accessor genetics))
   (:metaclass sophont-class))
 
-;; Convenience macro.
-(defmacro defsophont (name) 
-  `(defclass ,name (sophont) () (:metaclass sophont-class)))
-
 ;;; Individual Characteristics
-(defmethod slot-unbound (class (individual sophont) (slot (eql 'characteristics)))
-  (let ((result-list))
+(defmethod slot-unbound (class (specimen sophont) (slot (eql 'characteristics)))
+  (let ((characteristic-list) (genetic-list))
     (dotimes (c 6)
       (let ((characteristic-value 0)
-	    (dice (nth c (characteristic-dice (class-of individual)))))
+	    (dice (nth c (characteristic-dice (class-of specimen)))))
 	(if (>= dice 4)
 	    (progn
 	      (- dice 2)
 	      (setf characteristic-value 12)))
-	(incf characteristic-value (roll dice))
-	(push characteristic-value result-list)))
-    (setf (slot-value individual slot) (nreverse result-list))))
-
-	
+	(push (roll 1) genetic-list)
+	(incf characteristic-value (+ (roll (decf dice)) (car genetic-list)))
+	(push characteristic-value characteristic-list)))
+    (setf (slot-value specimen 'genetics) (nreverse genetic-list))
+    (setf (slot-value specimen slot) (nreverse characteristic-list))))
 
 
