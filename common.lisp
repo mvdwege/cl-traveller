@@ -79,5 +79,12 @@
   "Roll flux on a list and return the rolled item."
   (let ((lower-bound 0) (upper-bound (- (length table) 1)))
     (nth (max lower-bound (min upper-bound
-			       (+ (flux) shift))) 
+			       (+ (flux) shift dm))) 
 	 table)))
+
+;;; Symbol representation functions
+(defun name-to-symbol (name-string)
+  (intern (substitute #\- #\Space (string-upcase name-string))))
+
+(defun symbol-to-name (symbol)
+  (string-capitalize (substitute #\Space #\- (symbol-name symbol))))
