@@ -96,8 +96,9 @@
 
 (defmethod slot-unbound (class (sophont sophont-class) (slot (eql 'locomotion)))
   (setf (slot-value sophont slot) 
-	(nth (min 10 (max 0 (+ (flux) 5 (native-terrain-mod sophont)))) 
-	     (nth (random 6) *locomotion-types*))))
+	(flux-on 
+	 (nth (random 6) *locomotion-types*)
+	 :dm (native-terrain-mod sophont))))
 
 (defmethod slot-unbound (class (sophont sophont-class) (slot (eql 'ecological-niche)))
   (let ((basic-niche (nth (+ (flux) 6) *basic-niche*)))
@@ -137,8 +138,7 @@
 	      (t 0)))
 	(characteristics))
     (dotimes (c 6) (push 
-		    (nth (min 10 (max 0 (+ (flux) 5 dm)))
-			 (nth c *sophont-characteristics*)) characteristics))
+		    (flux-on (nth c *sophont-characteristics*) :dm dm) characteristics))
     (setf (slot-value sophont slot) (nreverse characteristics))))
 
 ;; If characteristics is set using :genetic-profile, we have to

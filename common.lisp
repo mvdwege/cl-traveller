@@ -82,6 +82,13 @@
 			       (+ (flux) shift dm))) 
 	 table)))
 
+(defun roll-on (table &key (dice 1) (dm 0))
+  (let ((lower-bound 0) 
+	(upper-bound (- (length table) 1))
+	(shift dice))
+    (nth (max lower-bound (min upper-bound
+			       (- (roll dice :dm dm) shift))) table)))
+    
 ;;; Symbol representation functions
 (defun name-to-symbol (name-string)
   (intern (substitute #\- #\Space (string-upcase name-string))))
