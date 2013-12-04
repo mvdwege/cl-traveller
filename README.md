@@ -1,15 +1,23 @@
 cl-traveller
 ============
 
-These are the Common Lisp Traveller5 utilities, a package to manage the mechanical aspects of running a Traveller5 universe.
+These are the Common Lisp Traveller5 utilities, a package to manage
+the mechanical aspects of running a Traveller5 universe.
 
-Currently the basic Model is still in development. World generation works, full System generation is almost done, and Sophont creation is in progress.
+Currently the basic Model is still in development. World generation
+works, full System generation is almost done, and Sophont creation is
+in progress.
 
-Once the Model works, Controller methods/functions and multiple Views will be implemented, starting with a simple text view to be used straight from the Lisp REPL; next up either a Gtk GUI app or a webapp using Weblocks.
+Once the Model works, Controller methods/functions and multiple Views
+will be implemented, starting with a simple text view to be used
+straight from the Lisp REPL; next up either a Gtk GUI app or a webapp
+using Weblocks.
 
-If you have a Common Lisp implementation, feel free to try out the work as it progresses.
+If you have a Common Lisp implementation, feel free to try out the
+work as it progresses.
 
-If you haven't, multiple good implementations are available for free. The code is tested on:
+If you haven't, multiple good implementations are available for
+free. The code is tested on:
 
 Multiplatform:
 
