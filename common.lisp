@@ -2,6 +2,10 @@
 (defpackage :traveller
   (:use :common-lisp)
   (:export 
+   :roll
+   :flux
+   :roll-on
+   :flux-on
    :world
    :climate
    :starport
@@ -13,7 +17,12 @@
    :law
    :tech-level
    :uwp
-   :make-world))
+   :trade-classifications
+   :make-world
+   :star
+   :primary-star
+   :secondary-star
+   :habitable-zone))
 
 
 (in-package :traveller)
@@ -61,6 +70,7 @@
 
 ;;; Dice rolling mechanics
 (defun roll (n &key (DM 0))
+"Roll n dice and add DM to the end result."
   (+
    (apply #'+
 	  (loop repeat n collect
@@ -68,6 +78,10 @@
    DM))
 
 (defun flux (&key good bad)
+"Roll two dice and subtract one from the other, giving results from -5
+to +5 for Flux, 0 to +5 for Good Flux and -5 to 0 for Bad
+Flux. takes :good (t|nil) or :bad (t|nil) as arguments. Defaults to
+normal Flux."
 ;; Note on Flux: if both :good and :bad are set to t, Flux will be Good.
   (let ((flux-dice (loop repeat 2 collect (+ 1 (random 6)))))
     (cond
@@ -83,6 +97,8 @@
 	 table)))
 
 (defun roll-on (table &key (dice 1) (dm 0))
+"Roll dice number of dice on a list, and return the list item
+indicated by the roll adjusted by dm."
   (let ((lower-bound 0) 
 	(upper-bound (- (length table) 1))
 	(shift dice))

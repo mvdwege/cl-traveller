@@ -18,7 +18,9 @@
 (defclass star (body)
   ((spectrum :initarg :spectrum
 	     :reader spectrum
-	     :documentation "Takes a list of the form '(<spectral class> <spectral decimal> <size category>).")
+	     :documentation 
+"Returns a list of the form '(<spectral class> <spectral decimal>
+<size category>).")
    (surface-orbit)
    (habitable-zone))
   (:documentation 
@@ -90,7 +92,7 @@
    (spectrum :initarg :spectrum
 	     :reader spectrum
 	     :documentation
-	     "Takes a list of the form '(<spectral class> <spectral decimal> <size category>.")
+	     "Returns a list of the form '(<spectral class> <spectral decimal> <size category>.")
    (surface-orbit)
    (companion :initarg :companion
 	      :reader companion))
@@ -160,6 +162,7 @@
    spectrum-list))
 
 (defmethod habitable-zone ((self star))
+"Returns the orbit for the Habitable Zone of a star."
   (if (slot-boundp self 'habitable-zone)
       (slot-value self 'habitable-zone)
       (progn 
@@ -181,6 +184,8 @@
 			      (return (nth 2 hz-values))))))))))))
 
 (defmethod surface-orbit ((self star))
+"Returns the orbit for the surface of the star. The next orbit is the
+first available for other bodies in the system."
   (with-slots (surface-orbit) self
     (if (slot-boundp self 'surface-orbit)
 	surface-orbit

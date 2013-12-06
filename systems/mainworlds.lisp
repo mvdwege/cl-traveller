@@ -67,6 +67,7 @@
       (setf trade-classifications (find-trade-codes w)))))
 
 (defmethod uwp ((w world))
+"Returns the UWP code for a world."
   (format nil "~a~{~a~}-~a~{ ~a~}" (to-ehex (starport w))
 	  (mapcar #'(lambda (attribute) (to-ehex(funcall attribute w))) 
 		  '(size atmosphere hydrographics population government law)) 
