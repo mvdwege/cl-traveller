@@ -80,6 +80,11 @@
     (+ (habitable-zone primary) (roll 2 :dm -1))
     (last-orbit primary))))
 
+(defmethod orbit ((primary primary-star) (world mainworld))
+  (or
+   (call-next-method)
+   (+ (habitable-zone primary) (hz-variance world))))
+
 (defun number-of-gas-giants () 
   (truncate (max 0 (- (/ (roll 2) 2) 2))))
     
@@ -132,35 +137,16 @@
    (slot-value system 'gas-giants)
    (loop repeat (number-of-gas-giants) collect (make-instance 'gas-giant))))
 
-(defmethod place-gas-giants ((system system))
-  (let ((stars (stars system)))
-    (dolist (gas-giant (gas-giants system))
-      ;; Remove any stars from the list that have no free orbits
-      (remove-if #'(lambda (star) (= 0 (free-orbits star))) stars)
-      ;; Now sort the list on occupied orbits. The one with the fewest
-      ;; is the car of the list and the next to receive a gas giant.
-      (setf stars 
-	    (sort stars 
-		  #'< :key 
-		  (lambda (star) (occupied-orbits star 'gas-giant))))
-      ;; Calculate gas giant size and replace every other small gas
-      ;; giant with an ice giant
-      (size gas-giant)
-      (if (and
-	   (typep gas-giant 'small-gas-giant)
-	   (oddp (count-if #'(lambda (small-gas-giant) (typep small-gas-giant 'small-gas-giant)) (gas-giants system))))
-	  (change-class gas-giant 'ice-giant))
-      ;; Calculate orbit and place gas giant
-      (let* ((star (car stars))
-	     (potential-orbit (orbit star gas-giant)))
-	;; Orbit occupied by another body? (If we get the same orbit
-	;; back in two calls, we already exist there)
-	(if (and
-	     (nth potential-orbit (orbits star))
-	     (not (= (orbit star gas-giant) potential-orbit)))
-	;; Yes, find closest free orbit
-	    (setf potential-orbit 
-		  (closest-free-orbit star gas-giant potential-orbit)))
-	(setf (nth potential-orbit (orbits star)) gas-giant)))))
-
-    
+(defmethod mainworld ((system system))
+  "Return the system Mainworld."
+  ;; According to the rules the mainworld is either a planet directly
+  ;; orbiting the primary or a sattellite of gas giant directly orbiting
+  ;; the primary. So we only have to search 1 level deep.
+  (flet ((find-mainworld (primary) 
+	   (find-if #'(lambda (x) (if (typep x 'mainworld) x)) (orbits primary))))
+    (or
+     (find-mainworld (primary system))
+     (dolist (body (remove nil (orbits system))) 
+       (return (find-mainworld body)))
+     ;; If neither of the above find a mainworld, we create and return one
+     (make-instance 'mainworld))))
