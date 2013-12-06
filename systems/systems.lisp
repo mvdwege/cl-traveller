@@ -163,14 +163,4 @@
 		  (closest-free-orbit star gas-giant potential-orbit)))
 	(setf (nth potential-orbit (orbits star)) gas-giant)))))
 
-(defmethod find-body ((primary body) (body body))
-  (let ((bodies (delete nil
-			(mapcar #'(lambda (x) (if (typep x 'body) x))
-			(orbits primary)))))
-    (if (find body (orbits primary))
-	primary
-	(dolist (x bodies)
-	  (if (find-body x body)
-	      (progn 
-		(return-from find-body x)))))))
     
