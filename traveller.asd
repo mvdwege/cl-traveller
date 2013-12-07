@@ -23,5 +23,6 @@
 	       (:module "sophonts"
 			:depends-on ("systems")
 			:components
-			((:file "sophonts")))))
+			((:file "sophonts")
+			 (:file "specimen" :depends-on ("sophonts"))))))
 
