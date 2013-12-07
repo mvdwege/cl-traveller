@@ -32,6 +32,10 @@
 		#P"data/" 
 		(asdf:system-source-directory :traveller)))
 
+;;; Dice frequencies (used to calculate percentages, as in Caste or
+;;; Gender frequencies). Based on a 2D roll.
+(defvar *frequencies '(1 2 3 4 5 6 5 4 3 2 1))
+
 ;;; EHex (extended Hex). The letters I and O are omitted to avoid
 ;;; confusion with the numbers 1 and 0. Thus A-H translates to (ASCII
 ;;; Code - 55), J-N to (ASCII Code - 56), and P-Z to (ASCII Code -
