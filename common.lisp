@@ -34,7 +34,7 @@
 
 ;;; Dice frequencies (used to calculate percentages, as in Caste or
 ;;; Gender frequencies). Based on a 2D roll.
-(defvar *frequencies '(1 2 3 4 5 6 5 4 3 2 1))
+(defvar *frequencies* '(1 2 3 4 5 6 5 4 3 2 1))
 
 ;;; EHex (extended Hex). The letters I and O are omitted to avoid
 ;;; confusion with the numbers 1 and 0. Thus A-H translates to (ASCII
@@ -109,9 +109,14 @@ indicated by the roll adjusted by dm."
     (nth (max lower-bound (min upper-bound
 			       (- (roll dice :dm dm) shift))) table)))
     
-;;; Symbol representation functions
+;;; Symbol representation functions. If the input argument is already
+;;; of the right type, silently return it, otherwise convert.
 (defun name-to-symbol (name-string)
-  (intern (substitute #\- #\Space (string-upcase name-string))))
+  (if (symbolp name-string)
+      name-string
+      (intern (substitute #\- #\Space (string-upcase name-string)))))
 
 (defun symbol-to-name (symbol)
-  (string-capitalize (substitute #\Space #\- (symbol-name symbol))))
+  (if (stringp symbol)
+      symbol
+      (string-capitalize (substitute #\Space #\- (symbol-name symbol)))))
