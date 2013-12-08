@@ -34,5 +34,21 @@
     (setf (slot-value specimen 'genetics) (nreverse genetic-list))
     (setf (slot-value specimen slot) (nreverse characteristic-list))))
 
+(defmethod c ((specimen sophont) n)
+  (nth n (characteristics specimen)))
+
+(defmethod slot-unbound (class (specimen sophont) (slot (eql 'genetics)))
+  (let ((genetics nil))
+    (dolist (x (characteristics specimen))
+      (let ((gene (roll 1)))
+	(if (> gene x)
+	    (push x genetics)
+	    (push gene genetics))))
+    (setf (slot-value specimen slot) (nreverse genetics))))
+
 (defmethod slot-unbound (class (specimen sophont) (slot (eql 'gender)))
-  (setf (slot-value specimen slot) (roll-on (gender-table (class-of specimen)) :dice 2))) 
+  (setf (slot-value specimen slot) (roll-on (gender-table (class-of specimen)) :dice 2))
+  (let ((differences (getf (gender-differences (class-of specimen)) (gender specimen))))
+    (setf (slot-value specimen 'characteristics)
+	  (mapcar #'+ (characteristics specimen) differences)))
+  (gender specimen))
