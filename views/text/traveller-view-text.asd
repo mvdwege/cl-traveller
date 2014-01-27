@@ -2,4 +2,4 @@
 
 (defsystem "traveller-view-text"
   :depends-on ("traveller")
-  :components ((:file "text")))
+  :components ((:file "sophont")))
