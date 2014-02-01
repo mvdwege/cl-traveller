@@ -132,6 +132,7 @@
      social-standing social-standing charisma charisma charisma
      charisma)))
 
+;;; Number of dice to roll for characteristic generation
 (defvar *characteristic-values*
   '((1 1 2 2 2 2 3 4 5 6 7 8)
     (1 1 2 2 2 2 2 3 3 3 3 3)
