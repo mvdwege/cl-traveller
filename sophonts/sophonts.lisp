@@ -75,7 +75,7 @@
 	      gatherer eater)
     carnivore (pouncer pouncer pouncer pouncer pouncer pouncer chaser
 	       chaser chaser chaser trapper siren killer)
-    scavenger (carrion-eater carrion-eatercarrion-eater hijacker
+    scavenger (carrion-eater carrion-eater carrion-eater hijacker
 	       hijacker hijacker intimidator intimidator intimidator
 	       intimidator intimidator reducer reducer)
     producer (collector collector collector collector collector
