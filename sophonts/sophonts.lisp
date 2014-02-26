@@ -112,6 +112,8 @@
 
 (defmethod slot-unbound (class (sophont sophont-class) (slot (eql 'ecological-niche)))
   (let ((basic-niche (flux-on *basic-niche* :shift 6)))
+    (if (eq basic-niche 'producer)
+	(setf (slot-value sophont 'locomotion) 'immobile))
     (setf (slot-value sophont slot) 
 	  (list basic-niche 
 		(flux-on  
