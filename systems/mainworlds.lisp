@@ -11,7 +11,10 @@
 (defclass body () 
   ((orbits 
     :initform nil
-    :reader orbits)))
+    :reader orbits)
+   (name
+    :initarg :name
+    :reader name)))
 
 (defmethod last-orbit ((body body))
   (- (length (orbits body)) 1))
@@ -19,10 +22,7 @@
 ;;; World class and methods
 ;;;
 (defclass world (body)
-  ((name
-    :initarg :name
-    :reader name)
-   (world-type
+  ((world-type
     :reader world-type)
    (hz-variance
     :reader hz-variance)
