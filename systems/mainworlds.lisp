@@ -64,6 +64,10 @@
 	    ((or (= flux-roll -6) (= flux-roll -3)) 'close-satellite)
 	    (t 'planet)))))
 
+(defmethod satellite-p ((w world))
+  (or (eq (world-type w) 'far-satellite)
+      (eq (world-type w) 'close-satellite)))
+
 (defmethod trade-classifications :before ((w world))
   (with-slots 'trade-classifications w
     (unless (slot-boundp w 'trade-classifications)
