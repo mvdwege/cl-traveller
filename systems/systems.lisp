@@ -132,10 +132,21 @@
      #'<
      :key #'abs))))
 
-(defmethod slot-unbound (class (system system) (slot (eql 'gas-giants)))
-  (setf 
-   (slot-value system 'gas-giants)
-   (loop repeat (number-of-gas-giants) collect (make-instance 'gas-giant))))
+(defun gas-giant-generator ()
+  (let ((ice-giantp nil))
+    (loop repeat (number-of-gas-giants) collect
+	 (let ((g (make-instance 'gas-giant)))
+	   ;; Force size generation to see if we have a Small Gas
+	   ;; Giant
+	   (size g)
+	   (cond
+	     ((and (typep g 'small-gas-giant)
+		   (not ice-giantp))
+	      (setf ice-giantp (not ice-giantp)))
+	     ((and (typep g 'small-gas-giant)
+		   ice-giantp)
+	      (change-class g 'ice-giant)))
+	   g))))
 
 (defmethod mainworld ((system system))
   "Return the system Mainworld."
