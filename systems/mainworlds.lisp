@@ -14,7 +14,7 @@
     :reader orbits)
    (name
     :initarg :name
-    :reader name)))
+    :accessor name)))
 
 (defmethod last-orbit ((body body))
   (- (length (orbits body)) 1))
@@ -46,6 +46,9 @@
    (tech-level :initarg :tl)
    (trade-classifications
     :accessor trade-classifications)))
+
+(defmethod slot-unbound (class (w world) (slot (eql 'name)))
+  (setf (slot-value w 'name) (format nil "~3,'0d-~3,'0d" (random 1000) (random 1000))))
 
 (defmethod slot-unbound (class (w world) (slot (eql 'hz-variance)))
   (setf (slot-value w 'hz-variance) (truncate (/ (flux) 3))))
@@ -111,7 +114,7 @@ attributes."
 	(and st si at hy po go la tl))
     (getf trade-code 'code)))
 
-(defmethod default-skills ((w world)) 
+(defmethod default-skills ((w world))
   )
 
 ;; Mainworld class. Essentially the same as world, but a different
