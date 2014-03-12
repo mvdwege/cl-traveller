@@ -1,6 +1,6 @@
 (in-package :traveller)
 
-(defmethod view ((sophont sophont-class) &optional (stream t))
+(defmethod describe-object ((sophont sophont-class) (stream t))
   (with-slots 
 	(homeworld native-terrain ecological-niche locomotion
 	characteristics characteristic-dice gender-structure)
