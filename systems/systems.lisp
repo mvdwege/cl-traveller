@@ -160,4 +160,18 @@
      (dolist (body (remove nil (orbits system))) 
        (return (find-mainworld body)))
      ;; If neither of the above find a mainworld, we create and return one
-     (make-instance 'mainworld))))
+     (let ((mw (make-instance 'mainworld)))
+       ;; We just plunk down the mainworld in its orbit. If it's a
+       ;; satellite, we immediately call for gas giant
+       ;; placement. Should that not result in a gas giant at all, we
+       ;; start normal world placement and let that put down a
+       ;; BigWorld for us.
+       (setf
+	(nth (orbit (primary system) mw) (orbits (primary system)))
+	mw)
+       (if (or (eq (world-type mw) 'close-satellite) (eq (world-type mw) 'far-satellite))
+	   (progn
+	     (gas-giants system)
+	     (if (= (count-if #'(lambda (x) (typep x 'gas-giant)) (orbits (primary system))) 0)
+		 (worlds system))))
+       (mainworld system)))))
