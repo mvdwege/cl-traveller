@@ -2,9 +2,8 @@
 
 (defclass system ()
   ((primary
-    :reader primary)
-   (gas-giants :reader gas-giants)))
-   
+    :reader primary)))
+
 (defmethod slot-unbound (class (self system) (slot (eql 'primary)))
   (let ((my-primary (make-instance 'primary-star)))
     (dolist (potential-secondary '(close-star near-star far-star))
@@ -83,7 +82,9 @@
 (defmethod orbit ((primary primary-star) (world mainworld))
   (or
    (call-next-method)
-   (+ (habitable-zone primary) (hz-variance world))))
+   (if (typep world 'asteroids)
+       (+ (habitable-zone primary) (roll 2 :dm -3))
+       (+ (habitable-zone primary) (hz-variance world)))))
 
 (defun number-of-gas-giants () 
   (truncate (max 0 (- (/ (roll 2) 2) 2))))
