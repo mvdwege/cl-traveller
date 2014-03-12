@@ -117,7 +117,7 @@ attributes."
 ;; Mainworld class. Essentially the same as world, but a different
 ;; type eases dispatching.
 (defclass mainworld (world) () )
-(defclass asteroids (mainworld planetoids) () )
+(defclass asteroids (planetoids mainworld) () )
 
 (defmethod trade-classifications :around ((mw mainworld))
   (let ((tc (call-next-method)))
