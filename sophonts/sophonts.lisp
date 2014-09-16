@@ -23,6 +23,8 @@
 	       :reader locomotion)
    (ecological-niche :initarg :ecological-niche
 		     :reader ecological-niche)
+   (caste-structure :initarg :caste-structure
+		    :reader caste-structure)
    (caste-table :initarg caste-table
 		:reader caste-table)
    (gender-structure :initarg :gender-structure
@@ -277,10 +279,45 @@
 	      special staff)
     social (artist gender enforcer drone artist unit unit unit patron special entertainer)
     special (deminimus useless advisor- instructor shaman expendable defective valuable 
-	     advisor+ sport)))
+	     advisor+ sport vice-leader)))
 
 (defvar *caste-tables-uniques*
   '(body brain economic director family archon military general social ruler))
+
+(defvar *caste-skills*
+  '(((Recon Aeronautics Admin advocate soundmimic acv)
+     (Spines Aquanautics Artillery Artist Biologics Author)
+     (Sensors Automotive Astrogator Beams Computer Broker)
+     (Actor Bureaucracy Craftsman Computer Driver Mole)
+     (Flyer BattleDress Dancer Diplomat Explosives Medic)
+     (Empath Engineer Designer Exotics G-Drive Grav))
+    ((Flapper Fluidics Electronics Forensics J-Drive Math)
+     (Leader Heavy Wpns Engineer Legged Liaison JOT)
+     (Tracked Launcher Gravitics Mechanic Athlete Trader)
+     (Pilot Magnetics Hostile Env Ordnance Blades LTA)
+     (Animals Life Support Language P-Plant Counsellor Sail)
+     (Tactics Photonics Musician Sapper Ortillery Ship))
+    ((Turrets Programmer Strategy Small Craft Fighting Rotor)
+     (Seafarer Slug Thrower M-Drive Stealth Osmancer Rider)
+     (Survey Naval Arch Navigation Survival Wheeled Spray)
+     (Comms Streetwise Polymers Trainer Screens Sub)
+     (Teacher Teamster Spacecraft Animals Steward Wing)
+     (Unarmed Vacc Suit Starships No Skill Zero-G WMD))))
+
+(defmethod caste-p ((sophont sophont-class))
+  (eql (nth 5 (characteristics sophont)) 'caste))
+
+
+(defmethod slot-unbound (class (sophont sophont-class) (slot (eql 'caste-structure)))
+  (setf (slot-value sophont 'caste-structure)
+	(if (caste-p sophont)
+	    (roll-on *caste-structure-table*)
+	    nil)))
+
+(defmethod slot-unbound (class (sophont sophont-class) (slot (eql 'caste-table)))
+  (if (caste-p sophont)
+      "caste-table"
+      (setf (slot-value sophont 'caste-table) nil)))
 
 ;; sophont constructor
 (defmacro defsophont (&rest initargs)
