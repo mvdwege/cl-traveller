@@ -5,6 +5,8 @@
 	(homeworld native-terrain ecological-niche locomotion
 	characteristics characteristic-dice gender-structure)
       sophont
+    ;; Force conversion of genetic profile to characteristic list)
+    (characteristics sophont)
     (if (class-name sophont)
 	(format stream "Name: ~a~%" (symbol-to-name (class-name sophont))))
     (format stream "Homeworld: ~a~%Native Terrain: ~a~%Ecological Niche: ~{~a ~}~%Movement mode: ~a~%"
