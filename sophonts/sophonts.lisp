@@ -325,4 +325,18 @@
 		  :direct-superclasses (list (find-class 'sophont))
 		  ,@initargs))
 
+;;;; Standard sophonts
+;;; Humaniti
+(setf (find-class 'human)
+      (defsophont
+	:name 'human
+	:genetic-profile "SDEIES"
+	:characteristic-dice '(2 2 2 2 2 2)
+	:homeworld terra
+	:native-terrain 0
+	:locomotion 'walker
+	:ecological-niche '(omnivore hunter-gatherer)
+	:gender-structure 'dual
+	:gender-table '(female male female male female male female male female male female)
+	:gender-differences '(male '(0 0 0 0 0 0) female '(0 0 0 0 0 0))))
 
