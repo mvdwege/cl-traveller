@@ -338,5 +338,5 @@
 	:ecological-niche '(omnivore hunter-gatherer)
 	:gender-structure 'dual
 	:gender-table '(female male female male female male female male female male female)
-	:gender-differences '(male '(0 0 0 0 0 0) female '(0 0 0 0 0 0))))
+	:gender-differences '(male (0 0 0 0 0 0) female (0 0 0 0 0 0))))
 
