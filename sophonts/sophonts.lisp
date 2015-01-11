@@ -351,3 +351,17 @@
 	:gender-structure 'dual
 	:gender-table '(male male male male female female female female female female female)
 	:gender-differences '(male (2 0 2 0 0 -3) female (0 0 0 0 0 0))))
+;;; K'kree
+;; TODO: K'kree have Caste, but caste generation is not finished yet.
+(setf (find-class 'k-kree)
+      (defsophont
+	  :name 'k-kree
+	:genetic-profile "SDEIEC"
+	:characteristic-dice '(4 2 4 2 2 2)
+	:homeworld (make-world :uwp "B863A03-F")
+	:native-terrain 0
+	:locomotion 'walker
+	:ecological-niche '(herbivore grazer)
+	:gender-structure 'FMN
+	:gender-table '(female male neuter female female neuter male male male neuter male)
+	:gender-differences '(male (3 0 3 0 0 0) female (0 0 0 0 0 0) neuter (0 0 0 0 0 0))))
