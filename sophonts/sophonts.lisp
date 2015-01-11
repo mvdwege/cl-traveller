@@ -339,4 +339,15 @@
 	:gender-structure 'dual
 	:gender-table '(female male female male female male female male female male female)
 	:gender-differences '(male (0 0 0 0 0 0) female (0 0 0 0 0 0))))
-
+;;; Aslan
+(setf (find-class 'aslan)
+      (defsophont
+	  :name 'aslan
+	:genetic-profile "SDSIES"
+	:characteristic-dice '(2 2 2 2 2 2)
+	:homeworld (make-world :uwp "A876986-E")
+	:native-terrain 1 :locomotion 'walker
+	:ecological-niche '(carnivore pouncer)
+	:gender-structure 'dual
+	:gender-table '(male male male male female female female female female female female)
+	:gender-differences '(male (2 0 2 0 0 -3) female (0 0 0 0 0 0))))
