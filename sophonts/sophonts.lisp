@@ -356,7 +356,7 @@
 (setf (find-class 'k-kree)
       (defsophont
 	  :name 'k-kree
-	:genetic-profile "SDEIEC"
+	:genetic-profile "SDEIEK"
 	:characteristic-dice '(4 2 4 2 2 2)
 	:homeworld (make-world :uwp "B863A03-F")
 	:native-terrain 0
@@ -365,3 +365,16 @@
 	:gender-structure 'FMN
 	:gender-table '(female male neuter female female neuter male male male neuter male)
 	:gender-differences '(male (3 0 3 0 0 0) female (0 0 0 0 0 0) neuter (0 0 0 0 0 0))))
+;;; Vargr
+(setf (find-class 'vargr)
+      (defsophont
+	  :name 'vargr
+	:genetic-profile "SDVIEC"
+	:characteristic-dice '(2 2 3 2 2 2)
+	:homeworld (make-world :uwp "A8859B9-F")
+	:native-terrain 0
+	:locomotion 'walker
+	:ecological-niche '(carnivore chaser)
+	:gender-structure 'dual
+	:gender-table '(female male female male female male female male female male female)
+	:gender-differences '(male (1 -1 1 0 0 -0) female (0 0 0 0 0 0))))
