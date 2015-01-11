@@ -332,7 +332,7 @@
 	:name 'human
 	:genetic-profile "SDEIES"
 	:characteristic-dice '(2 2 2 2 2 2)
-	:homeworld terra
+	:homeworld (make-world :uwp "A877B99-D")
 	:native-terrain 0
 	:locomotion 'walker
 	:ecological-niche '(omnivore hunter-gatherer)
