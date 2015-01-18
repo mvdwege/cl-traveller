@@ -2,7 +2,8 @@
 
 (defclass system ()
   ((primary
-    :reader primary)))
+    :reader primary)
+   (mainworld :reader mainworld)))
 
 (defmethod slot-unbound (class (self system) (slot (eql 'primary)))
   (let ((my-primary (make-instance 'primary-star)))
@@ -148,31 +149,3 @@
 		   ice-giantp)
 	      (change-class g 'ice-giant)))
 	   g))))
-
-(defmethod mainworld ((system system))
-  "Return the system Mainworld."
-  ;; According to the rules the mainworld is either a planet directly
-  ;; orbiting the primary or a sattellite of gas giant directly orbiting
-  ;; the primary. So we only have to search 1 level deep.
-  (flet ((find-mainworld (primary) 
-	   (find-if #'(lambda (x) (if (typep x 'mainworld) x)) (orbits primary))))
-    (or
-     (find-mainworld (primary system))
-     (dolist (body (remove nil (orbits system))) 
-       (return (find-mainworld body)))
-     ;; If neither of the above find a mainworld, we create and return one
-     (let ((mw (make-instance 'mainworld)))
-       ;; We just plunk down the mainworld in its orbit. If it's a
-       ;; satellite, we immediately call for gas giant
-       ;; placement. Should that not result in a gas giant at all, we
-       ;; start normal world placement and let that put down a
-       ;; BigWorld for us.
-       (setf
-	(nth (orbit (primary system) mw) (orbits (primary system)))
-	mw)
-       (if (or (eq (world-type mw) 'close-satellite) (eq (world-type mw) 'far-satellite))
-	   (progn
-	     (gas-giants system)
-	     (if (= (count-if #'(lambda (x) (typep x 'gas-giant)) (orbits (primary system))) 0)
-		 (worlds system))))
-       (mainworld system)))))
