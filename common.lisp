@@ -22,7 +22,8 @@
    :star
    :primary-star
    :secondary-star
-   :habitable-zone))
+   :habitable-zone)
+  (:shadow "safety"))
 
 
 (in-package :traveller)
@@ -69,6 +70,8 @@
        (- num 2))
       ((>= num 19)
        (- num 1))
+      ((= num -13)
+       nil)
       (t num))))
       
 
