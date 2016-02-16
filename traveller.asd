@@ -7,7 +7,7 @@
 			:depends-on ("common")
 			:components
 			((:file "mainworlds")
-			 (:file "other-worlds" :depends-on ("mainworlds"))
+			 (:file "other-worlds")
 			 (:file "uwp-attributes")
 			 (:file "stars" :depends-on ("other-worlds"))
 			 (:file "systems" :depends-on ("stars" "mainworlds" "other-worlds"))
@@ -25,5 +25,6 @@
 			:components
 			((:file "sophonts")
 			 (:file "specimen" :depends-on ("sophonts"))
-			 (:file "tools" :depends-on ("sophonts" "specimen"))))))
+;			 (:file "tools" :depends-on ("sophonts" "specimen"))
+			 ))))
 
