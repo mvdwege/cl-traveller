@@ -202,22 +202,24 @@
 (defun parse-uwp (uwp-string) 
   (loop for char across (remove #\- uwp-string) collect (string char)))  
 
-(defmacro make-world (&key (uwp "*******-*") (world-type `'world))
-"Constructor macro for a world object. Pass in a standard Traveller
-UWP string to set the UWP attribute values; use * in the UWP string to
+(defun make-world (&key (uwp "*******-*") (world-type 'mainworld) name)
+"Constructor for a world object. Pass in a standard Traveller UWP
+string to set the UWP attribute values; use * in the UWP string to
 keep attributes unset, they will be lazily evaluated later when you
 call their reader.
 
 Defaults to *******-* in order to generate a world with all slots
 unbound, to either use random generation or other methods to set world
 attributes."
-  (let ((initargs '(:st :siz :atm :hyd :pop :gov :law :tl))
-	(attributes (mapcar #'(lambda (x) `(quote ,x)) *uwp-attributes*)))
-    `(make-instance ,world-type
-		    ,@(mapcan #'(lambda (x y z) 
-				  (unless (equal z "*") 
-				    (list x `(make-instance ,y :code (to-number ,z))))) initargs attributes (parse-uwp uwp)))))
-    
+  (let ((init-args '(:name :st :siz :atm :hyd :pop :gov :law :tl))
+	(init-values (append (list name) (mapcar #'to-number (parse-uwp uwp)))))
+    (apply #'make-instance world-type
+           (loop
+              for init-arg in init-args
+              for init-value in init-values
+              append
+                (if init-value (list init-arg init-value))))))
+
 (defmethod find-trade-codes ((w world))
   (let ((trade-codes nil)) 
     (loop for trade-code in *trade-codes* do
