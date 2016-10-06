@@ -262,9 +262,6 @@
 	   differences)))
       (setf (getf difference-table g) (nreverse differences))))
     (setf (slot-value sophont slot) difference-table)))
-	
-	
-
 ;;; Caste generation
 (defvar *caste-structure-table*
   '(body economic family military social skilled))
@@ -285,25 +282,25 @@
   '(body brain economic director family archon military general social ruler))
 
 (defvar *caste-skills*
-  '(((Recon Aeronautics Admin advocate soundmimic acv)
-     (Spines Aquanautics Artillery Artist Biologics Author)
-     (Sensors Automotive Astrogator Beams Computer Broker)
-     (Actor Bureaucracy Craftsman Computer Driver Mole)
-     (Flyer BattleDress Dancer Diplomat Explosives Medic)
-     (Empath Engineer Designer Exotics G-Drive Grav))
-    ((Flapper Fluidics Electronics Forensics J-Drive Math)
-     (Leader Heavy Wpns Engineer Legged Liaison JOT)
-     (Tracked Launcher Gravitics Mechanic Athlete Trader)
-     (Pilot Magnetics Hostile Env Ordnance Blades LTA)
-     (Animals Life Support Language P-Plant Counsellor Sail)
-     (Tactics Photonics Musician Sapper Ortillery Ship))
-    ((Turrets Programmer Strategy Small Craft Fighting Rotor)
-     (Seafarer Slug Thrower M-Drive Stealth Osmancer Rider)
-     (Survey Naval Arch Navigation Survival Wheeled Spray)
-     (Comms Streetwise Polymers Trainer Screens Sub)
-     (Teacher Teamster Spacecraft Animals Steward Wing)
-     (Unarmed Vacc Suit Starships No Skill Zero-G WMD))))
-
+  '(((ACV Comms High-G Steward Ordnance Naval-Arch)
+     (JOT Rider Sensors Fwd-Obs Survival Streetwise)
+     (LTA Spines Flapper Seafarer nil Astrogator)
+     (WMD Leader Tracked Engineer Computer Navigation)
+     (Chef Survey Animals Fluidics Bay-Wpns Explosives)
+     (Mole Dancer Tactics Launcher Magnetics Jump-Drive))
+    ((Grav Artist Turrets Teamster Photonics Counsellor)
+     (Boat Legged Teacher Designer Vacc-Suit Submersible)
+     (Ship Sapper Unarmed Engineer Artillery Aeronautics)
+     (Wing Driver Exotics Language Craftsman Aquanautics)
+     (Recon Gunner Stealth Musician Gravitics BattleDress)
+     (Actor Blades Trainer Strategy Forensics Electronics)
+    (Flyer Zero-G Animals Maneuver Biologics Hostile-Environment)
+     (Pilot Author Liaison Polymers Ortillery Power-Systems)
+     (Rotor Broker Athlete Advocate Automotive Life-Support)
+     (Admin Trader Fighter Computer Bureaucrat Slug-Thrower)
+     (Beams Sprays Wheeled Diplomat Heavy-Weapons Fleet-Tactics)
+     (Medic Gambler Screens Mechanic Programmer Spacecraft))))
+     
 (defmethod caste-p ((sophont sophont-class))
   (eql (nth 5 (characteristics sophont)) 'caste))
 
@@ -314,7 +311,23 @@
 	    (roll-on *caste-structure-table*)
 	    nil)))
 
+(defmethod generate-caste-table ((sophont sophont-class))
+  (let* ((caste-table-values (getf *caste-tables* (caste-structure sophont)))
+         (caste-table (loop repeat 11 collect (let ((roll (flux-on caste-table-values)))
+                                                (if (eq roll 'special)
+                                                    (flux-on (getf *caste-tables* 'special))
+                                                    roll)))))
+    ;; We set the slot, so we can now safely use the reader to set the
+    ;; special values, 2D6=7 Common and 2D6=12 Unique.
+    (setf (nth 5 caste-table)
+          (nth 5 caste-table-values))
+    (setf (nth 10 caste-table)
+          (getf *caste-tables-uniques* (caste-structure sophont)))
+    caste-table))
+
 (defmethod slot-unbound (class (sophont sophont-class) (slot (eql 'caste-table)))
-  (if (caste-p sophont)
-      "caste-table"
-      (setf (slot-value sophont 'caste-table) nil)))
+  (setf (slot-value sophont 'caste-table)
+        (cond
+          ((not (caste-p sophont)) nil)
+          ((and (caste-p sophont) (eq (caste-structure sophont) 'skilled)) nil)
+          (t (generate-caste-table sophont)))))
