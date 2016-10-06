@@ -13,7 +13,7 @@
 	:name 'human
 	:genetic-profile "SDEIES"
 	:characteristic-dice '(2 2 2 2 2 2)
-	:homeworld (make-world :uwp "A877B99-D")
+	:homeworld (make-world :uwp "A877B99-D" :name "Earth")
 	:native-terrain 0
 	:locomotion 'walker
 	:ecological-niche '(omnivore hunter-gatherer)

@@ -52,3 +52,6 @@
     (setf (slot-value specimen 'characteristics)
 	  (mapcar #'+ (characteristics specimen) differences)))
   (gender specimen))
+
+(defmethod caste ((specimen sophont))
+  (nth (c specimen 5) (caste-table (class-of specimen))))

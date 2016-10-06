@@ -123,3 +123,14 @@ indicated by the roll adjusted by dm."
   (if (stringp symbol)
       symbol
       (string-capitalize (substitute #\Space #\- (symbol-name symbol)))))
+
+;;; Conditions
+
+(define-condition interaction-required (serious-condition)
+  ((what :initarg :what :reader what
+         :documentation "The symbol we need an interactive definition for")
+   (options :initarg :options :reader options
+            :documentation "The valid symbols as values for 'what"))
+  (:report (lambda (condition stream)
+             (format stream "Choose your option for ~a" (what condition))))
+  (:documentation "Raise a signal if interaction is required. Frontends can use this to present the end user with options, by catching the signal."))
