@@ -76,12 +76,12 @@
       
 
 ;;; Dice rolling mechanics
-(defun roll (n &key (DM 0))
+(defun roll (n &key (DM 0) (sides 6))
 "Roll n dice and add DM to the end result."
   (+
    (apply #'+
 	  (loop repeat n collect
-	       (+ 1 (random 6))))
+	       (+ 1 (random sides))))
    DM))
 
 (defun flux (&key good bad)
@@ -103,14 +103,14 @@ normal Flux."
 			       (+ (flux) shift dm))) 
 	 table)))
 
-(defun roll-on (table &key (dice 1) (dm 0))
+(defun roll-on (table &key (dice 1) (dm 0) (sides 6))
 "Roll dice number of dice on a list, and return the list item
 indicated by the roll adjusted by dm."
   (let ((lower-bound 0) 
 	(upper-bound (- (length table) 1))
 	(shift dice))
     (nth (max lower-bound (min upper-bound
-			       (- (roll dice :dm dm) shift))) table)))
+			       (- (roll dice :dm dm :sides sides) shift))) table)))
     
 ;;; Symbol representation functions. If the input argument is already
 ;;; of the right type, silently return it, otherwise convert.
@@ -123,3 +123,14 @@ indicated by the roll adjusted by dm."
   (if (stringp symbol)
       symbol
       (string-capitalize (substitute #\Space #\- (symbol-name symbol)))))
+
+;;; Conditions
+
+(define-condition interaction-required (serious-condition)
+  ((what :initarg :what :reader what
+         :documentation "The symbol we need an interactive definition for")
+   (options :initarg :options :reader options
+            :documentation "The valid symbols as values for 'what"))
+  (:report (lambda (condition stream)
+             (format stream "Choose your option for ~a" (what condition))))
+  (:documentation "Raise a signal if interaction is required. Frontends can use this to present the end user with options, by catching the signal."))
