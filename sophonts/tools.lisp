@@ -19,7 +19,8 @@
 	:ecological-niche '(omnivore hunter-gatherer)
 	:gender-structure 'dual
 	:gender-table '(female male female male female male female male female male female)
-	:gender-differences '(male (0 0 0 0 0 0) female (0 0 0 0 0 0))))
+	:gender-differences '(male (0 0 0 0 0 0) female (0 0 0 0 0 0))
+        :life-stages '((infant . 1/2) (child . 2) (teen . 2) (young-adult . 2) (adult . 2) (peak . 2) (mid-life . 2) (senior . 2) (elder . 2) (retirement . 2))))
 ;;; Aslan
 (setf (find-class 'aslan)
       (defsophont
