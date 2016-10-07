@@ -364,3 +364,5 @@ classes (instances of which are individual beings"))
                                    (cons term (nth index (flux-on *life-stage-duration*)))))
                 *life-stages*)))
 
+(defmethod life-expectancy ((sophont sophont-class))
+  (apply #'+ (mapcar #'(lambda (terms) (* 4 (cdr terms))) (life-stages sophont))))

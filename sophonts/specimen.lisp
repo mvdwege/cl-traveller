@@ -66,3 +66,5 @@
                'skilled)) (setf (slot-value specimen 'caste) (roll-on (roll-on (roll-on *caste-skills* :sides 3)))))
     (t (setf (caste specimen) (nth (c specimen 5) (caste-table (class-of specimen)))))))
 
+(defmethod life-expectancy ((specimen sophont))
+  (life-expectancy (class-of specimen)))
