@@ -345,7 +345,7 @@ classes (instances of which are individual beings"))
   '(infant child teen young-adult adult peak mid-life senior elder retirement))
 
 (defvar *life-stage-duration*
-  "Table S-09-A, page 561 in edition 5.09"
+;;  Table S-09-A, page 561 in edition 5.09
   '((1/2 1 0 0 0 1 0 0 0 1)
     (1/2 1 1 1 1 1 1 1 1 1)
     (1/2 1 1 1 1 1 1 1 1 1)
@@ -357,3 +357,10 @@ classes (instances of which are individual beings"))
     (1/2 3 3 3 3 3 3 3 3 3)
     (1/2 4 4 4 4 4 4 4 4 4)
     (1/2 6 6 6 6 6 6 6 6 6)))
+
+(defmethod slot-unbound (class (sophont sophont-class) (slot (eql 'life-stages)))
+  (setf (slot-value sophont slot)
+        (mapcar #'(lambda (term) (let ((index (position term *life-stages*)))
+                                   (cons term (nth index (flux-on *life-stage-duration*)))))
+                *life-stages*)))
+
