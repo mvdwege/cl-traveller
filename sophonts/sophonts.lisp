@@ -32,9 +32,12 @@
    (gender-table :initarg :gender-table
 		 :reader gender-table)
    (gender-differences :initarg :gender-differences
-		       :reader gender-differences))
+		       :reader gender-differences)
+   (life-stages :initarg :life-stages
+                :reader life-stages))
   (:documentation "Sophont metaclass, used to generate sophont
 classes (instances of which are individual beings"))
+
 
 ;; Keep the compiler happy. Especially SBCL insists on this method
 ;; existing. We're not doing really deep MOP things, so a simple "Yes,
@@ -337,3 +340,20 @@ classes (instances of which are individual beings"))
           ((not (caste-p sophont)) nil)
           ((and (caste-p sophont) (eq (caste-structure sophont) 'skilled)) nil)
           (t (generate-caste-table sophont)))))
+
+(defvar *life-stages*
+  '(infant child teen young-adult adult peak mid-life senior elder retirement))
+
+(defvar *life-stage-duration*
+  "Table S-09-A, page 561 in edition 5.09"
+  '((1/2 1 0 0 0 1 0 0 0 1)
+    (1/2 1 1 1 1 1 1 1 1 1)
+    (1/2 1 1 1 1 1 1 1 1 1)
+    (1/2 1 1 1 1 1 1 1 1 1)
+    (1/2 2 2 2 2 2 2 2 2 2)
+    (1/2 2 2 2 2 2 2 2 2 2)
+    (1/2 2 2 2 2 2 2 2 2 2)
+    (1/2 3 3 3 3 3 3 3 3 3)
+    (1/2 3 3 3 3 3 3 3 3 3)
+    (1/2 4 4 4 4 4 4 4 4 4)
+    (1/2 6 6 6 6 6 6 6 6 6)))
