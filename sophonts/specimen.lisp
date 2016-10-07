@@ -15,7 +15,8 @@
 		    :initarg :characteristics)
    (genetics :accessor genetics)
    (gender :initarg :gender
-	   :reader gender))
+	   :reader gender)
+   (caste :accessor caste))
   (:metaclass sophont-class))
 
 ;;; Individual Characteristics
@@ -53,5 +54,11 @@
 	  (mapcar #'+ (characteristics specimen) differences)))
   (gender specimen))
 
-(defmethod caste ((specimen sophont))
-  (nth (c specimen 5) (caste-table (class-of specimen))))
+(defmethod slot-unbound (class (specimen sophont) (slot (eql 'caste)))
+  (cond
+    ((not (caste-p (class-of specimen))) (setf (slot-value specimen 'caste) nil))
+    ((and (caste-p (class-of specimen))
+          (eql (caste-structure (class-of specimen))
+               'skilled)) (setf (slot-value specimen 'caste) (roll-on (roll-on (roll-on *caste-skills* :sides 3)))))
+    (t (nth (c specimen 5) (caste-table (class-of specimen))))))
+
