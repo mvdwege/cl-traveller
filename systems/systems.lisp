@@ -3,7 +3,7 @@
 (defclass system ()
   ((primary
     :reader primary)
-   (mainworld :reader mainworld)))
+   (mainworld :accessor mainworld)))
 
 (defmethod slot-unbound (class (self system) (slot (eql 'primary)))
   (let ((my-primary (make-instance 'primary-star)))
