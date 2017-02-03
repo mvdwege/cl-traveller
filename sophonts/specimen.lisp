@@ -10,7 +10,9 @@
 	      :initarg :homeworld)
    (birthworld :reader birthworld)
    (age :accessor age
-       :initarg :age)
+        :initarg :age
+        :initform 0)
+   (history :reader history)
    (characteristics :accessor characteristics
 		    :initarg :characteristics)
    (genetics :accessor genetics)
@@ -40,7 +42,7 @@
   (:documentation "Generic function to get Characteristic n from a Sophont"))
 
 (defmethod c ((specimen sophont) n)
-  (nth n (characteristics specimen)))
+  (nth (- n 1) (characteristics specimen)))
 
 (defmethod slot-unbound (class (specimen sophont) (slot (eql 'genetics)))
   (let ((genetics nil))
@@ -66,5 +68,43 @@
                'skilled)) (setf (slot-value specimen 'caste) (roll-on (roll-on (roll-on *caste-skills* :sides 3)))))
     (t (setf (caste specimen) (nth (c specimen 5) (caste-table (class-of specimen)))))))
 
+;;; Aging
 (defmethod life-expectancy ((specimen sophont))
   (life-expectancy (class-of specimen)))
+
+(defun cumulative-ages (life-stages)
+  (loop for term-length in
+       (mapcar
+        #'(lambda (x) (* (cdr x) 4))
+        life-stages)
+        sum term-length into cumulative-length
+        collect cumulative-length))
+
+(defmethod current-life-stage ((specimen sophont))
+  (let ((age-thresholds (cumulative-ages (life-stages (class-of specimen)))))
+    (nth
+     (position-if #'(lambda (x) (>= x (age specimen))) age-thresholds)
+     *life-stages*)))
+
+(defmethod aging-p ((specimen sophont) &key (type 'physical))
+  "Return t if characteristic is subject to Physical or Mental Aging
+effects. Pass 'physical or 'mental to the :type keyword parameter to
+determine which. Defaults to physical."
+  ;; Physical Aging checks are only applicable from Life Stage Peak
+  ;; onward, Mental from Retirement, thereafter they will take place
+  ;; at every even multiple of 4
+  (let* ((age-thresholds (cumulative-ages (life-stages (class-of specimen))))
+        (threshold-life-stage (cond ((eql type 'physical) 'peak)
+                                    ((eql type 'mental) 'retirement)
+                                    (t (error "Unknown Aging type"))))
+         (current-life-stage-index (position (current-life-stage specimen) *life-stages*))
+         (threshold-age (nth (position threshold-life-stage *life-stages*) age-thresholds)))
+    (when
+        (and
+         (>= current-life-stage-index
+             (position threshold-life-stage *life-stages*))
+         (eql (mod (- (age specimen) threshold-age) 4) 0))
+      (< (roll 2) current-life-stage-index))))
+
+(defmethod aging ((specimen sophont) &key (increase 1))
+  (incf (age specimen) increase))
