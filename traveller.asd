@@ -24,6 +24,6 @@
 			:components
 			((:file "sophonts")
 			 (:file "specimen" :depends-on ("sophonts"))
-;			 (:file "tools" :depends-on ("sophonts" "specimen"))
+			 (:file "tools" :depends-on ("sophonts" "specimen"))
 			 ))))
 
