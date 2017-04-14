@@ -111,6 +111,18 @@ indicated by the roll adjusted by dm."
       symbol
       (string-capitalize (substitute #\Space #\- (symbol-name symbol)))))
 
+;;; Imperial Calendar
+(defun random-date ()
+  (+ 1 (random 365)))
+
+(defvar *days-of-week* '(holiday wonday tuday thirday forday fiday sixday senday))
+
+(defun day-of-week (date)
+  (nth (mod (- date 1) 7) *days-of-week*))
+
+;; Current year is the default Third Imperium setting
+(defvar *current-year* 1105)
+
 ;;; Conditions
 
 (define-condition interaction-required (serious-condition)
