@@ -7,7 +7,9 @@
    :interaction-required
    ;; Worlds and systems
    :body :world :mainworld :asteroids :uwp :make-world
-   :star :primary-star :secondary-star :habitable-zone)
+   :star :primary-star :secondary-star :habitable-zone
+   ;; Sophonts
+   :sophont-class :genetic-profile :sophont :c)
   (:shadow "safety"))
 
 
