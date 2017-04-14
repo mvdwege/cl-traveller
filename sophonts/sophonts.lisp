@@ -32,7 +32,9 @@
    (gender-table :initarg :gender-table
 		 :reader gender-table)
    (gender-differences :initarg :gender-differences
-		       :reader gender-differences)))
+		       :reader gender-differences))
+  (:documentation "Sophont metaclass, used to generate sophont
+classes (instances of which are individual beings"))
 
 ;; Keep the compiler happy. Especially SBCL insists on this method
 ;; existing. We're not doing really deep MOP things, so a simple "Yes,
@@ -179,6 +181,9 @@
 	(nsubstitute 'caste 'kaste characteristics-list)
 	(setf (slot-value sophont 'characteristics) (nreverse characteristics-list)))))
   (call-next-method))
+
+(defgeneric genetic-profile (sophont)
+  (:documentation "Return the Genetic Profile for this sophont"))
 
 (defmethod genetic-profile ((sophont sophont-class))
   (let ((clist (characteristics sophont))
