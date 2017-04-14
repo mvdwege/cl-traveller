@@ -41,11 +41,10 @@
 ;;; Gender frequencies). Based on a 2D roll.
 (defvar *frequencies* '(1 2 3 4 5 6 5 4 3 2 1))
 
-;;; EHex (extended Hex). The letters I and O are omitted to avoid
-;;; confusion with the numbers 1 and 0. Thus A-H translates to (ASCII
-;;; Code - 55), J-N to (ASCII Code - 56), and P-Z to (ASCII Code -
-;;; 57).
 (defun to-ehex (num)
+  "EHex (extended Hex). The letters I and O are omitted to avoid
+  confusion with the numbers 1 and 0. Thus A-H translates to (ASCII
+  Code - 55), J-N to (ASCII Code - 56), and P-Z to (ASCII Code - 57)."
   (cond
     ((<= num 9)
      (write-to-string num))
@@ -59,6 +58,7 @@
      (error "Ehex Digit out of range"))))
 
 (defun to-number (hex)
+  "Convert an EHex digit back to a numerical value"
   ;; If we get an unquoted number, return it.
   (when (numberp hex) (return-from to-number hex))
   ;; If the Ehex digit is 0-9, just return it.
