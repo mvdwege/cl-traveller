@@ -3,30 +3,11 @@
   (:use :common-lisp)
   (:export 
    ;; Common functions
-   :to-ehex
-   :to-number
-   :roll
-   :flux
-   :roll-on
-   :flux-on
+   :to-ehex :to-number :roll :flux :roll-on :flux-on
    :interaction-required
-   :world
-   :climate
-   :starport
-   :size
-   :atmosphere
-   :hydrographics
-   :population
-   :government
-   :law
-   :tech-level
-   :uwp
-   :trade-classifications
-   :make-world
-   :star
-   :primary-star
-   :secondary-star
-   :habitable-zone)
+   ;; Worlds and systems
+   :body :world :mainworld :asteroids :uwp :make-world
+   :star :primary-star :secondary-star :habitable-zone)
   (:shadow "safety"))
 
 
