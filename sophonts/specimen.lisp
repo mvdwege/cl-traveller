@@ -10,8 +10,7 @@
 	      :initarg :homeworld)
    (birthworld :reader birthworld)
    (age :accessor age
-        :initarg :age
-        :initform 0)
+        :initarg :age)
    (history :reader history)
    (characteristics :accessor characteristics
 		    :initarg :characteristics)
@@ -108,3 +107,8 @@ determine which. Defaults to physical."
 
 (defmethod aging ((specimen sophont) &key (increase 1))
   (incf (age specimen) increase))
+
+(defmethod slot-unbound (class (specimen sophont) (slot (eql 'age)))
+  "If age is not set, it will default to the start of Young Adult, the
+age of a starting character before Career Resolution."
+  (setf (age specimen) (+ 1 (nth 2 (cumulative-ages (life-stages (class-of specimen)))))))
