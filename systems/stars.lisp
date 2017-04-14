@@ -161,8 +161,10 @@
    nil
    spectrum-list))
 
+(defgeneric habitable-zone (star)
+  (:documentation "Returns the orbit for the Habitable Zone of a star."))
+
 (defmethod habitable-zone ((self star))
-"Returns the orbit for the Habitable Zone of a star."
   (if (slot-boundp self 'habitable-zone)
       (slot-value self 'habitable-zone)
       (progn 
