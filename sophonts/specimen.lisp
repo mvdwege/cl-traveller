@@ -60,5 +60,5 @@
     ((and (caste-p (class-of specimen))
           (eql (caste-structure (class-of specimen))
                'skilled)) (setf (slot-value specimen 'caste) (roll-on (roll-on (roll-on *caste-skills* :sides 3)))))
-    (t (nth (c specimen 5) (caste-table (class-of specimen))))))
+    (t (setf (caste specimen) (nth (c specimen 5) (caste-table (class-of specimen)))))))
 
