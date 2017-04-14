@@ -17,7 +17,8 @@
    (gender :initarg :gender
 	   :reader gender)
    (caste :accessor caste))
-  (:metaclass sophont-class))
+  (:metaclass sophont-class
+              :documentation "Class to represent sophont individuals"))
 
 ;;; Individual Characteristics
 (defmethod slot-unbound (class (specimen sophont) (slot (eql 'characteristics)))
@@ -34,6 +35,9 @@
 	(push characteristic-value characteristic-list)))
     (setf (slot-value specimen 'genetics) (nreverse genetic-list))
     (setf (slot-value specimen slot) (nreverse characteristic-list))))
+
+(defgeneric c (specimen n)
+  (:documentation "Generic function to get Characteristic n from a Sophont"))
 
 (defmethod c ((specimen sophont) n)
   (nth n (characteristics specimen)))
