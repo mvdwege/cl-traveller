@@ -2,10 +2,14 @@
 (defpackage :traveller
   (:use :common-lisp)
   (:export 
+   ;; Common functions
+   :to-ehex
+   :to-number
    :roll
    :flux
    :roll-on
    :flux-on
+   :interaction-required
    :world
    :climate
    :starport
