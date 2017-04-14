@@ -11,6 +11,8 @@
    (birthworld :reader birthworld)
    (age :accessor age
         :initarg :age)
+   (%next-aging-check
+    :accessor %next-aging-check)
    (history :reader history)
    (characteristics :accessor characteristics
 		    :initarg :characteristics)
