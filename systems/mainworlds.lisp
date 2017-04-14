@@ -11,15 +11,16 @@
 (with-open-file (stream (merge-pathnames *data* "uwp-attributes"))
   (setf *uwp-definitions* (read stream)))
 
-;; Worlds, stars and gas giants all derive from 'body in order to have
-;; an 'orbits slot and reader and the applicable utility methods.
 (defclass body () 
   ((orbits 
     :initform nil
     :reader orbits)
    (name
     :initarg :name
-    :accessor name)))
+    :accessor name))
+  (:documentation
+   "Worlds, stars and gas giants all derive from 'body in order to
+have an 'orbits slot and reader and the applicable utility methods."))
 
 (defmethod last-orbit ((body body))
   (- (length (orbits body)) 1))
@@ -51,7 +52,9 @@
    (tech-level :initarg :tl
                :reader tech-level)
    (trade-classifications
-    :accessor trade-classifications)))
+    :accessor trade-classifications))
+  (:documentation "World class, holding the main slot and method
+definitions"))
 
 (defmethod slot-unbound (class (w world) (slot (eql 'name)))
   (setf (slot-value w 'name) (format nil "~3,'0d-~3,'0d" (random 1000) (random 1000))))
@@ -192,8 +195,10 @@
     (unless (slot-boundp w 'trade-classifications)
       (setf trade-classifications (find-trade-codes w)))))
 
+(defgeneric uwp (world)
+  (:documentation "Returns the UWP code for a world."))
+
 (defmethod uwp ((w world))
-"Returns the UWP code for a world."
   (format nil "~a~{~a~}-~a~{ ~a~}" (to-ehex (starport w))
 	  (mapcar #'(lambda (attribute) (to-ehex(funcall attribute w))) 
 		  '(size atmosphere hydrographics population government law)) 
@@ -240,11 +245,14 @@ attributes."
     (getf trade-code 'code)))
 
 (defmethod default-skills ((w world))
+  "Returns the default skills for a world"
   )
 
-;; Mainworld class. Essentially the same as world, but a different
-;; type eases dispatching.
-(defclass mainworld (world) () )
+(defclass mainworld (world) ()
+  (:documentation
+   "Mainworld class. Essentially the same as world, but a different
+type eases dispatching."))
+
 (defclass asteroids (planetoids mainworld) () )
 
 (defmethod trade-classifications :around ((mw mainworld))
