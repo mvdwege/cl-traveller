@@ -13,6 +13,7 @@
         :initarg :age)
    (%next-aging-check
     :accessor %next-aging-check)
+   (birthday :reader birthday)
    (history :reader history)
    (characteristics :accessor characteristics
 		    :initarg :characteristics)
