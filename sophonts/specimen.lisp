@@ -111,7 +111,7 @@ determine which. Defaults to physical."
          (eql (mod (- (age specimen) threshold-age) 4) 0))
       (< (roll 2) current-life-stage-index))))
 
-(defmethod aging ((specimen sophont) &key (increase 1))
+(defmethod age-up ((specimen sophont) &key (increase 1))
   (incf (age specimen) increase))
 
 (defmethod slot-unbound (class (specimen sophont) (slot (eql 'age)))
