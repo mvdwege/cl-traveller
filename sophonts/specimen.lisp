@@ -120,5 +120,24 @@
 
 (defmethod slot-unbound (class (specimen sophont) (slot (eql 'age)))
   "If age is not set, it will default to the start of Young Adult, the
-age of a starting character before Career Resolution."
-  (setf (age specimen) (+ 1 (nth 2 (cumulative-ages (life-stages (class-of specimen)))))))
+age of a starting character before Career Resolution. This will also set the next Aging Check to the start of Life Stage 5, Peak."
+  (setf (%next-aging-check specimen)
+        ( + 1 (nth 4 (cumulative-ages (life-stages (class-of specimen))))))
+  (setf (age specimen) (nth 2 (cumulative-ages (life-stages (class-of specimen))))))
+
+(defmethod calculate-next-aging-check ((specimen sophont))
+  (let ((life-stage (position (current-life-stage specimen) *life-stages*))
+        (peak-start-age (+ (nth 4 (cumulative-ages (life-stages (class-of specimen)))) 1)))
+    ;; We have three conditions: Life Stage is less than Peak, Life
+    ;; Stage is exactly the first year of Peak, or age falls in Peak
+    ;; or higher.
+    (setf (%next-aging-check specimen)
+          (cond
+            ((< life-stage 4)
+             peak-start-age)
+            ((= (age specimen) peak-start-age)
+             peak-start-age)
+            (t
+             (do ((current-age peak-start-age))
+                 ((> current-age (age specimen)) current-age)
+                (incf current-age 4)))))))
