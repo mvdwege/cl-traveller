@@ -131,7 +131,7 @@
 age of a starting character before Career Resolution. This will also set the next Aging Check to the start of Life Stage 5, Peak."
   (setf (%next-aging-check specimen)
         (+ 1 (nth 4 (cumulative-ages (life-stages (class-of specimen))))))
-  (setf (age specimen) (nth 2 (cumulative-ages (life-stages (class-of specimen))))))
+  (setf (age specimen) (+ 1 (nth 2 (cumulative-ages (life-stages (class-of specimen)))))))
 
 (defmethod calculate-next-aging-check ((specimen sophont))
   (let ((life-stage (position (current-life-stage specimen) *life-stages*))
