@@ -102,8 +102,13 @@
         (ch (characteristics specimen))
         (ch-indexes '(0 1 2))
         (life-stage-index (position (current-life-stage specimen) *life-stages*)))
-    (if (>= life-stage-index 9)
-        (append ch-indexes '(5)))
+    ;; Intelligence always gets checked, but if Instinct is there, it
+    ;; should be checked too.
+    (cond
+      ((and (>= life-stage-index 9)
+            (eql (nth 4 (characteristics (class-of specimen))) 'instinct))
+       (append ch-indexes '(3 4)))
+      ((>= life-stage-index 9) (append ch-indexes '(3))))
     (dolist (n ch-indexes)
       (when (< (roll 2) life-stage-index)
         (when (eql (decf (nth n ch)) 0)
