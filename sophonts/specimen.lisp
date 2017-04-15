@@ -83,7 +83,7 @@
         #'(lambda (x) (* (cdr x) 4))
         life-stages)
         sum term-length into cumulative-length
-        collect cumulative-length))
+        collect (- cumulative-length 1)))
 
 (defmethod current-life-stage ((specimen sophont))
   (let ((age-thresholds (cumulative-ages (life-stages (class-of specimen)))))
