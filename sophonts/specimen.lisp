@@ -92,10 +92,13 @@
         collect (- cumulative-length 1)))
 
 (defmethod current-life-stage ((specimen sophont))
-  (let ((age-thresholds (cumulative-ages (life-stages (class-of specimen)))))
-    (nth
-     (position-if #'(lambda (x) (>= x (age specimen))) age-thresholds)
-     *life-stages*)))
+  (let* ((age-thresholds (cumulative-ages (life-stages (class-of specimen))))
+         (retirement-age (car (last age-thresholds))))
+    (cond
+      ((>= (age specimen) retirement-age) 'retirement)
+      (t (nth
+          (position-if #'(lambda (x) (>= x (age specimen))) age-thresholds)
+          *life-stages*)))))
 
 (defmethod check-aging ((specimen sophont))
   (let ((affected-characteristics 0)
@@ -108,7 +111,7 @@
       ((and (>= life-stage-index 9)
             (eql (nth 4 (characteristics (class-of specimen))) 'instinct))
        (append ch-indexes '(3 4)))
-      ((>= life-stage-index 9) (append ch-indexes '(3))))
+      ((>= life-stage-index 9) (append ch-indexes '(3*))))
     (dolist (n ch-indexes)
       (when (< (roll 2) life-stage-index)
         (when (eql (decf (nth n ch)) 0)
