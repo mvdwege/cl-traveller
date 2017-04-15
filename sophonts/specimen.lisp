@@ -16,6 +16,8 @@
    (%mortal-illness-p
     :accessor %mortal-illness-p
     :initform nil)
+   (health-status :accessor health-status
+                  :initform 'ok)
    (birthday :reader birthday)
    (history :reader history)
    (characteristics :accessor characteristics
@@ -103,14 +105,15 @@
         (when (eql (decf (nth n ch)) 0)
           (setf (nth n ch) 1)
           (incf affected-characteristics))))
-    (cond
-      ((eql affected-characteristics 2) 'major-illness)
-      ((and (eql affected-characteristics 3)
-            (not (%mortal-illness-p specimen)))
-       (setf (%mortal-illness-p specimen) t) 'etremely-major-illness)
-      ((and (eql affected-characteristics 3)
-            (%mortal-illness-p specimen)) 'dead)
-      ('ok))))
+    (setf (health-status specimen)
+          (cond
+            ((eql affected-characteristics 2) 'major-illness)
+            ((and (eql affected-characteristics 3)
+                  (not (%mortal-illness-p specimen)))
+             (setf (%mortal-illness-p specimen) t) 'etremely-major-illness)
+            ((and (eql affected-characteristics 3)
+                  (%mortal-illness-p specimen)) 'dead)
+            ('ok)))))
 
 (defmethod age-up ((specimen sophont) &key (increase 1))
   (incf (age specimen) increase))
