@@ -128,11 +128,12 @@
             ('ok)))))
 
 (defmethod age-up ((specimen sophont) &key (increase 1))
-  (incf (age specimen) increase)
-  (when (= (age specimen) (%next-aging-check specimen))
-    (check-aging specimen)
-    (setf (%next-aging-check specimen) (calculate-next-aging-check specimen)))
-  (age specimen))
+  (unless (eql (health-status specimen) 'dead)
+    (incf (age specimen) increase)
+    (when (= (age specimen) (%next-aging-check specimen))
+      (check-aging specimen)
+      (setf (%next-aging-check specimen) (calculate-next-aging-check specimen)))
+    (age specimen)))
 
 (defmethod slot-unbound (class (specimen sophont) (slot (eql 'age)))
   "If age is not set, it will default to the start of Young Adult, the
