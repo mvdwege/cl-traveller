@@ -13,6 +13,9 @@
         :initarg :age)
    (%next-aging-check
     :accessor %next-aging-check)
+   (%mortal-illness-p
+    :accessor %mortal-illness-p
+    :initform nil)
    (birthday :reader birthday)
    (history :reader history)
    (characteristics :accessor characteristics
