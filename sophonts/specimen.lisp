@@ -29,6 +29,10 @@
   (:metaclass sophont-class
               :documentation "Class to represent sophont individuals"))
 
+(defmethod initialize-instance :after ((specimen sophont) &key &allow-other-keys)
+  (if (slot-boundp specimen 'age)
+      (setf (%next-aging-check specimen) (calculate-next-aging-check specimen))))
+
 ;;; Individual Characteristics
 (defmethod slot-unbound (class (specimen sophont) (slot (eql 'characteristics)))
   (let ((characteristic-list) (genetic-list))
