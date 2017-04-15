@@ -91,25 +91,26 @@
      (position-if #'(lambda (x) (>= x (age specimen))) age-thresholds)
      *life-stages*)))
 
-(defmethod aging-p ((specimen sophont) &key (type 'physical))
-  "Return t if characteristic is subject to Physical or Mental Aging
-effects. Pass 'physical or 'mental to the :type keyword parameter to
-determine which. Defaults to physical."
-  ;; Physical Aging checks are only applicable from Life Stage Peak
-  ;; onward, Mental from Retirement, thereafter they will take place
-  ;; at every even multiple of 4
-  (let* ((age-thresholds (cumulative-ages (life-stages (class-of specimen))))
-        (threshold-life-stage (cond ((eql type 'physical) 'peak)
-                                    ((eql type 'mental) 'retirement)
-                                    (t (error "Unknown Aging type"))))
-         (current-life-stage-index (position (current-life-stage specimen) *life-stages*))
-         (threshold-age (nth (position threshold-life-stage *life-stages*) age-thresholds)))
-    (when
-        (and
-         (>= current-life-stage-index
-             (position threshold-life-stage *life-stages*))
-         (eql (mod (- (age specimen) threshold-age) 4) 0))
-      (< (roll 2) current-life-stage-index))))
+(defmethod check-aging ((specimen sophont))
+  (let ((affected-characteristics 0)
+        (ch (characteristics specimen))
+        (ch-indexes '(0 1 2))
+        (life-stage-index (position (current-life-stage specimen) *life-stages*)))
+    (if (>= life-stage-index 9)
+        (append ch-indexes '(5)))
+    (dolist (n ch-indexes)
+      (when (< (roll 2) life-stage-index)
+        (when (eql (decf (nth n ch)) 0)
+          (setf (nth n ch) 1)
+          (incf affected-characteristics))))
+    (cond
+      ((eql affected-characteristics 2) 'major-illness)
+      ((and (eql affected-characteristics 3)
+            (not (%mortal-illness-p specimen)))
+       (setf (%mortal-illness-p specimen) t) 'etremely-major-illness)
+      ((and (eql affected-characteristics 3)
+            (%mortal-illness-p specimen)) 'dead)
+      ('ok))))
 
 (defmethod age-up ((specimen sophont) &key (increase 1))
   (incf (age specimen) increase))
