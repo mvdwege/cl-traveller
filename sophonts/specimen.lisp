@@ -158,3 +158,7 @@ age of a starting character before Career Resolution. This will also set the nex
              (do ((current-age peak-start-age))
                  ((> current-age (age specimen)) current-age)
                 (incf current-age 4)))))))
+
+(defmethod (setf age) :after (age (specimen sophont))
+  ;; After setting age, recalculate and set next Aging Check
+  (setf (%next-aging-check specimen) (calculate-next-aging-check specimen)))
