@@ -159,6 +159,29 @@ age of a starting character before Career Resolution. This will also set the nex
                  ((> current-age (age specimen)) current-age)
                 (incf current-age 4)))))))
 
+(defmethod caste-shift ((specimen sophont))
+  (let ((c (caste-shift-method (class-of specimen)))
+	(age-thresholds
+	 (mapcar
+	  #'(lambda (x) (+ 1 x))
+	  (cumulative-ages (life-stages (class-of specimen)))))
+	(current-age (age specimen)))
+    (cond
+      ((and (eql c 'rotation) (position current-age age-thresholds))
+       ;; Increase Caste by 1, roll over from 12 to 1 and gain new
+       ;; Skill if 'skilled
+       (if (eq (c specimen 5) 12)
+	    (setf (nth 5 (characteristics specimen)) 2)
+	    (incf (nth 5 (characteristics specimen))))
+       (if (eql (caste-structure specimen) 'skilled)
+	    (roll-on (roll-on (roll-on *caste-skills*)))))
+      ((and (eql c 'mid-life-shift) (eql (nth 5 age-thresholds) current-age))
+       (setf (nth 5 (characteristics specimen)) (roll-on (caste-table (class-of specimen)))))
+      (t
+       nil))))
+
 (defmethod (setf age) :after (age (specimen sophont))
-  ;; After setting age, recalculate and set next Aging Check
+  ;; After setting age, check for Caste Shift and recalculate and set
+  ;; next Aging Check
+  (caste-shift specimen)
   (setf (%next-aging-check specimen) (calculate-next-aging-check specimen)))

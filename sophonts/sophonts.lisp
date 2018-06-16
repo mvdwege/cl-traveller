@@ -27,6 +27,8 @@
 		    :reader caste-structure)
    (caste-table :initarg caste-table
 		:reader caste-table)
+   (caste-shift-method :initarg caste-shift-method
+		       :reader caste-shift-method)
    (gender-structure :initarg :gender-structure
 		     :reader gender-structure)
    (gender-table :initarg :gender-table
@@ -302,8 +304,8 @@ classes (instances of which are individual beings"))
      (Ship Sapper Unarmed Engineer Artillery Aeronautics)
      (Wing Driver Exotics Language Craftsman Aquanautics)
      (Recon Gunner Stealth Musician Gravitics BattleDress)
-     (Actor Blades Trainer Strategy Forensics Electronics)
-    (Flyer Zero-G Animals Maneuver Biologics Hostile-Environment)
+     (Actor Blades Trainer Strategy Forensics Electronics))
+    ((Flyer Zero-G Animals Maneuver Biologics Hostile-Environment)
      (Pilot Author Liaison Polymers Ortillery Power-Systems)
      (Rotor Broker Athlete Advocate Automotive Life-Support)
      (Admin Trader Fighter Computer Bureaucrat Slug-Thrower)
@@ -340,6 +342,10 @@ classes (instances of which are individual beings"))
           ((not (caste-p sophont)) nil)
           ((and (caste-p sophont) (eq (caste-structure sophont) 'skilled)) nil)
           (t (generate-caste-table sophont)))))
+
+(defmethod slot-unbound (class (sophont sophont-class) (slot (eql 'caste-shift-method)))
+  (let ((methods '(nil nil nil nil mid-life-shift rotation)))
+    (setf (slot-value sophont 'caste-shift-method) (roll-on methods))))
 
 (defvar *life-stages*
   '(infant child teen young-adult adult peak mid-life senior elder retirement))
