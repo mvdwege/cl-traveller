@@ -83,7 +83,7 @@ normal Flux."
       (bad (apply #'- (sort flux-dice #'<)))
       (t (apply #'- flux-dice)))))
 
-(defun flux-on (table &key (shift 5) (dm 0))
+(defun flux-on (table &key (shift (/ (- (length table) 1) 2)) (dm 0))
   "Roll flux on a list and return the rolled item."
   (let ((lower-bound 0) (upper-bound (- (length table) 1)))
     (nth (max lower-bound (min upper-bound
