@@ -314,6 +314,9 @@ classes (instances of which are individual beings"))
      (Beams Sprays Wheeled Diplomat Heavy-Weapons Fleet-Tactics)
      (Medic Gambler Screens Mechanic Programmer Spacecraft))))
 
+(defvar *caste-shift-methods*
+  '(nil nil nil nil mid-life-shift rotation))
+
 (defvar *caste-assignment-methods*
   '(assigned-at-birth assigned-at-adolescence assigned-by-heredity
     assigned-by-community family-choice personal-choice))
@@ -350,8 +353,7 @@ classes (instances of which are individual beings"))
           (t (generate-caste-table sophont)))))
 
 (defmethod slot-unbound (class (sophont sophont-class) (slot (eql 'caste-shift-method)))
-  (let ((methods '(nil nil nil nil mid-life-shift rotation)))
-    (setf (slot-value sophont 'caste-shift-method) (roll-on methods))))
+  (setf (slot-value sophont 'caste-shift-method) (roll-on *caste-shift-methods*)))
 
 (defmethod slot-unbound (class (sophont sophont-class) (slot (eql 'caste-assignment-method)))
   (setf (slot-value sophont 'caste-assignment-method)
