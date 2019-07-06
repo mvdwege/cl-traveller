@@ -29,6 +29,8 @@
 		:reader caste-table)
    (caste-shift-method :initarg caste-shift-method
 		       :reader caste-shift-method)
+   (caste-assignment-method :initarg caste-assignment-method
+			    :reader caste-assignment-method)
    (gender-structure :initarg :gender-structure
 		     :reader gender-structure)
    (gender-table :initarg :gender-table
@@ -311,7 +313,11 @@ classes (instances of which are individual beings"))
      (Admin Trader Fighter Computer Bureaucrat Slug-Thrower)
      (Beams Sprays Wheeled Diplomat Heavy-Weapons Fleet-Tactics)
      (Medic Gambler Screens Mechanic Programmer Spacecraft))))
-     
+
+(defvar *caste-assignment-methods*
+  '(assigned-at-birth assigned-at-adolescence assigned-by-heredity
+    assigned-by-community family-choice personal-choice))
+
 (defmethod caste-p ((sophont sophont-class))
   (eql (nth 5 (characteristics sophont)) 'caste))
 
@@ -346,6 +352,10 @@ classes (instances of which are individual beings"))
 (defmethod slot-unbound (class (sophont sophont-class) (slot (eql 'caste-shift-method)))
   (let ((methods '(nil nil nil nil mid-life-shift rotation)))
     (setf (slot-value sophont 'caste-shift-method) (roll-on methods))))
+
+(defmethod slot-unbound (class (sophont sophont-class) (slot (eql 'caste-assignment-method)))
+  (setf (slot-value sophont 'caste-assignment-method)
+	  (if (caste-p sophont) (roll-on *caste-assignment-methods*))))
 
 (defvar *life-stages*
   '(infant child teen young-adult adult peak mid-life senior elder retirement))
