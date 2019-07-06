@@ -216,7 +216,7 @@ classes (instances of which are individual beings"))
 			  (eql characteristic 'education)
 			  (eql characteristic 'training))
 			 2
-			 (flux-on cv-column :dm dm))))
+			 (flux-on cv-column :shift 5 :dm dm))))
 	(push result result-list)))
     (setf (slot-value sophont slot) (nreverse result-list))))
 
