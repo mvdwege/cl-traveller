@@ -125,11 +125,11 @@ indicated by the roll adjusted by dm."
 
 ;;; Conditions
 
-(define-condition interaction-required (serious-condition)
+(define-condition interaction-required (error)
   ((what :initarg :what :reader what
          :documentation "The symbol we need an interactive definition for")
    (options :initarg :options :reader options
             :documentation "The valid symbols as values for 'what"))
   (:report (lambda (condition stream)
              (format stream "Choose your option for ~a" (what condition))))
-  (:documentation "Raise a signal if interaction is required. Frontends can use this to present the end user with options, by catching the signal."))
+  (:documentation "Throw an error if interaction is required. Frontends can use this to present the end user with options, by catching the signal."))
