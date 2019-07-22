@@ -131,5 +131,5 @@ indicated by the roll adjusted by dm."
    (options :initarg :options :reader options
             :documentation "The valid symbols as values for 'what"))
   (:report (lambda (condition stream)
-             (format stream "Choose your option for ~a" (what condition))))
+             (format stream "Assigning a value to ~a requires interaction.~%Possible values are ~a" (what condition) (options condition))))
   (:documentation "Throw an error if interaction is required. Frontends can use this to present the end user with options, by catching the signal."))
