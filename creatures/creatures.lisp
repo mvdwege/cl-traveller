@@ -57,7 +57,7 @@
            hijacker hijacker intimidator intimidator intimidator
            intimidator intimidator reducer reducer)
     producer (collector collector collector collector collector
-          collector basker basker basker basker basker basker)))
+          collector basker basker basker basker basker basker basker)))
 
 ;; Only four different conditions, so just a few ifs will do, no need
 ;; to break out method dispatch.
