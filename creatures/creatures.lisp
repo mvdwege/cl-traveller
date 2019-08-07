@@ -25,14 +25,7 @@
 
 ;;; Homeworld generation
 (defmethod slot-unbound (class (creature creature-class) (slot (eql 'homeworld)))
-  (setf (slot-value creature slot)
-    ;; Brute-force approach: generate worlds until we have one
-    ;; suitable for life.
-    (do ((world (make-world) (make-world)))
-        ((and
-          (>= (population world) 7)
-    (>= (atmosphere world) 2)) world)
-      ())))
+  (setf (slot-value creature slot) (make-world)))
 
 ;;; Determine Native Terrain, Locomotion, and Ecological Niche.
 (defvar *terrain-types*
@@ -85,60 +78,64 @@
 
 (defmethod slot-unbound (class (creature creature-class) (slot (eql 'native-terrain)))
   (setf (slot-value creature slot)
-    (min 5 (max -5 (+ (flux) (terrain-modifiers creature))))))
+    (flux-on *terrain-types* :dm (terrain-modifiers creature))))
 
-(defmethod native-terrain :around ((creature-class creature-class))
-  (string-capitalize
-   (symbol-to-name (nth (+ (call-next-method) 5) *terrain-types*))))
+(defmethod native-terrain-mod ((creature creature-class))
+  (- (position (native-terrain creature) *terrain-types*) 5))
 
 (defmethod slot-unbound (class (creature creature-class) (slot (eql 'locomotion)))
-  (setf (slot-value creature slot)
-    (nth (+ 5 (native-terrain-mod creature))(nth (random 6) *locomotion-types*))))
+  (let ((row (+ 5 (native-terrain-mod creature)))
+        (column (roll 1 :dm (terrain-modifiers creature))))
+    (nth row (nth column *locomotion-types*))))
+
+(defmethod slot-unbound (class (creature creature-class) (slot (eql 'niche)))
+  (setf (slot-value creature 'niche) (flux-on *basic-niche*)))
 
 (defmethod slot-unbound (class (creature creature-class) (slot (eql 'ecological-niche)))
-  (let ((basic-niche (flux-on *basic-niche* :shift 6)))
+  (with-slots ((basic-niche niche)) creature
     (if (eq basic-niche 'producer)
-    (setf (slot-value creature 'locomotion) 'immobile))
+        (setf (slot-value creature 'locomotion) 'immobile))
     (setf (slot-value creature slot)
-<<<<<<< HEAD
-      (list basic-niche
-        (flux-on
-         (getf *ecological-niche* basic-niche)
-         :shift 6
-         :dm (native-terrain-mod creature))))))
-=======
           (list basic-niche
                 (flux-on
                  (getf *ecological-niche* basic-niche)
                  :dm (native-terrain-mod creature))))))
 
-;; If plain setting ecological-niche, make sure niche is sane
-(defmethod (setf ecological-niche) :around (value (creature creature-class))
-  "Just call this method with (setf (ecological-niche creature)
-specialized-niche) and let the validation method figure out the basic
-niche. If you insist you can call it with a list (basic-niche
-specialized-niche)"
+;; If plain setting ecological-niche, make sure niche is sane. Should
+;; work either as an accessor or with an initarg, so create a helper
+;; function which we can call.
+(defun %validate-niche (value)
   ;; This condition always returns a list of the format (basic-niche
   ;; ecological-niche), or it throws an error. So as a side effect, we
-  ;; can simply set niche to be the car of this list. Since we als
-  ;; have to return the list itself to call-next-method, run this
-  ;; condition *inside* a let binding. Ugly, but it works.
-  (let ((validated-value
-         (cond ((atom value)
-                (list (find-if
-                       (lambda (x) (find value (getf *ecological-niche* x)))
-                       *basic-niche*)
-                      value))
-               ;; if it's not an atom, check if the car is a valid basic
-               ;; niche, *and* if the second element (cadr) is a valid
-               ;; ecological niche for this basic niche; if yes, return
-               ;; value.
-               ((and (eql (length value) 2)
-                     (find (car value) *basic-niche*)
-                     (find (cadr value) (getf *ecological-niche* (car value))))
-                value)
-               ;; If neither, throw an error.
-               (t (error "Invalid value. Look in *ecological-niche* to see valid values")))))
+  ;; can simply set niche to be the car of this list.
+  (cond ((atom value)
+         (list (find-if
+                (lambda (x) (find value (getf *ecological-niche* x)))
+                *basic-niche*)
+               value))
+        ;; if it's not an atom, check if the car is a valid basic
+        ;; niche, *and* if the second element (cadr) is a valid
+        ;; ecological niche for this basic niche; if yes, return
+        ;; value.
+        ((and (eql (length value) 2)
+              (find (car value) *basic-niche*)
+              (find (cadr value) (getf *ecological-niche* (car value))))
+         value)
+        ;; If neither, throw an error.
+        (t (error "Invalid value. Look in *ecological-niche* to see valid values"))))
+
+(defmethod (setf ecological-niche) :around (value (creature creature-class))
+  "Just call this method with (setf (ecological-niche creature)
+specialized-niche) and let the validation figure out the basic
+niche. If you insist you can call it with a list (basic-niche
+specialized-niche)"
+  (let ((validated-value (%validate-niche value)))
     (setf (niche creature) (car validated-value))
     (call-next-method validated-value creature)))
->>>>>>> be6b79e... Add accessors and validation methods to creature class
+
+(defmethod initialize-instance :after ((creature creature-class) &key ecological-niche &allow-other-keys)
+  ;; We're still initializing. To stop triggering slot-unbounds and
+  ;; :around methods, do an immediate setf slot-value.
+  (let ((validated-niche (%validate-niche ecological-niche)))
+    (setf (slot-value creature 'ecological-niche) validated-niche)
+    (setf (slot-value creature 'niche) (car validated-niche))))
