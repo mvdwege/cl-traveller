@@ -18,7 +18,8 @@
 			 (:module "weapons" 
 				  :depends-on ("items")
 				  :components
-				  ((:file "weapons")))))
+				  ((:file "weapons-data")
+				   (:file "weapons" :depends-on ("weapons-data"))))))
 	       (:module "sophonts"
 			:depends-on ("systems")
 			:components
