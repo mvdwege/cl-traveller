@@ -1,31 +1,35 @@
 ;;;; Weapon definitions and GunMaker
 (in-package :traveller)
 
-;;; Superclass, used to find categories and dispatch.
-(defclass weapon (item) () )
+(defclass weapon-class (item-class)
+  ((weapon-type :initarg :type :reader weapon-type)
+   (weapon-subtype :initarg :subtype :reader weapon-subtype)
+   (descriptor :initarg :descriptor :reader descriptor)
+   (weapon-burden :initarg :weapon-burden :reader weapon-burden
+                  :documentation "This is the Burden descriptor, not to be confused with the Burden attribute of the QREBS subsystem")
+   (stage :initarg :stage :reader stage)
+   (users :initarg :users :reader users)
+   (portability :initarg :portability :reader portability))
+  (:documentation "Use this metaclass to create a weapon class (i.e. a model from a specific manufacturer), then instantiate that class to produce individual weapons"))
 
-;;; Base classes for categories, used for dispatch.
-(defclass artillery (weapon) () )
-(defclass long-gun (weapon) () )
-(defclass handgun (weapon) () )
-(defclass shotgun (weapon) () )
-(defclass machinegun (weapon) () )
-(defclass projector (weapon) () )
-(defclass designator (weapon) () )
-(defclass launcher (weapon) () )
+(defmethod slot-unbound (class (weapon weapon-class) (slot (eql 'weapon-type)))
+  (setf (slot-value weapon slot) (getf (roll-on *weapon-types-table*) :type)))
 
-(defmacro weapon-type (category (&key code type tl range mass burden h1 d1 hits-v1 price))
-  `(defclass ,(intern (string-upcase type)) (,category)
-     ((code :initform ,code :allocation :class)
-      (tl :initform ,tl :allocation :class)
-      (range :initform ,range :allocation :class)
-      (mass :initform ,mass :allocation :class)
-      (burden :initform ,burden :allocation :class)
-      (h1 :initform ,h1 :allocation :class)
-      (d1 :initform ,d1 :allocation :class)
-      (hits-v1 :initform ,hits-v1 :allocation :class)
-      (price :initform ,price :allocation :class))))
+(defmethod slot-unbound (class (weapon weapon-class) (slot (eql 'weapon-subtype)))
+  (let* ((wt (weapon-type weapon))
+     (subtypes-table
+      (getf (find-if (lambda (x) (eql (getf x :type) wt)) *weapon-types-table*) :subtypes)))
+    (setf (slot-value weapon slot) (roll-on subtypes-table))))
 
+(defmethod slot-unbound (class (weapon weapon-class) (slot (eql 'descriptor)))
+  (let* ((wt (weapon-type weapon))
+     (descriptor-table
+      (getf
+       (find-if (lambda (x) (eql (getf x :type) wt)) *weapon-types-table*)
+       :descriptors)))
+    (setf (slot-value weapon slot) (roll-on descriptor-table))))
 
-
-  
+;;; Superclass for individual weapon items.
+(defclass weapon (item)
+  ()
+  (:metaclass weapon-class))
