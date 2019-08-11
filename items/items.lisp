@@ -17,13 +17,17 @@ The basic 'item superclass assumes QREBS 50000. If the Referee has set other def
 (defmethod closer-mop:validate-superclass ((class item-class) (super standard-class))
   t)
 
+(defclass item-descriptor ()
+  ((descriptor :initarg :descriptor :reader descriptor)
+   (code :initarg :code :reader code))
+  (:documentation "A generic descriptor class. Subclass this for specific item types (Weapons, Armor, Vehicles, Ship components) and specific descriptors (Bulk, Stage, Type, Subtype etc.)."))
+
 ;;; Item base class, with slots for QREBS (pp. 190-196). Safety is
 ;;; a shadowed symbol.
-(defclass item () 
+(defclass item ()
   ((quality :accessor quality :initform 5 :type integer)
    (reliability :accessor reliability :initform 0 :type integer)
    (ease-of-use :accessor ease-of-use :initform 0 :type integer)
    (burden :accessor burden :initform 0 :type integer)
    (safety :accessor safe :initform 0 :type integer))
   (:metaclass item-class))
-
