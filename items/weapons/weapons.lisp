@@ -78,6 +78,17 @@ store-value restart by default"
                      (append (list 'weapon-descriptor :descriptor value)
                              descriptor-args)))))))
 
+(defmethod longname ((weapon weapon-class) &key (stringp nil))
+  (with-accessors ((weapon-subtype weapon-subtype)
+                   (weapon-descriptor weapon-descriptor)) weapon
+    (let ((stringified-longname
+           (apply #'format (append '(nil "~a-~a") (mapcar #'descriptor
+                                                         (list weapon-descriptor
+                                                               weapon-subtype))))))
+      (if stringp
+          stringified-longname
+          (name-to-symbol stringified-longname)))))
+
 ;;; Superclass for individual weapon items.
 (defclass weapon (item)
   ()
