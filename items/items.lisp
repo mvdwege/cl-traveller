@@ -19,8 +19,15 @@ The basic 'item superclass assumes QREBS 50000. If the Referee has set other def
 
 (defclass item-descriptor ()
   ((descriptor :initarg :descriptor :reader descriptor)
-   (code :initarg :code :reader code))
+   (name :initarg :name :reader name
+         :documentation "If stringification of the symbol in descriptor is incorrect due to - characters in the name, set a static string representation in this slot. slot-unbound will by default fill it with a stringified symbol name")
+   (code :initarg :code :reader code)
+   (tl :initarg :tl :reader tl)
+   (cost :initarg :cr :reader cr))
   (:documentation "A generic descriptor class. Subclass this for specific item types (Weapons, Armor, Vehicles, Ship components) and specific descriptors (Bulk, Stage, Type, Subtype etc.)."))
+
+(defmethod slot-unbound (class (item-descriptor item-descriptor) (slot (eql 'name)))
+  (setf (slot-value item-descriptor 'name) (symbol-to-name (descriptor item-descriptor))))
 
 ;;; Item base class, with slots for QREBS (pp. 190-196). Safety is
 ;;; a shadowed symbol.
