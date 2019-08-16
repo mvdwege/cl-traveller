@@ -43,7 +43,7 @@
     projector (:category projectors :code "Pj" :tl 9 :range 0 :mass 1 :burden 0 :h1 any :d1 1 :cr 300)
     designator (:category designators :code "D" :tl 7 :range 5 :mass 10 :burden 1 :h1 any :d1 1 :cr 2000)
     launcher (:category launchers :code "L" :tl 6 :range 3 :mass 10 :burden 1 :h1 any :d1 1 :cr 1000)
-    multi-launcher (:category launchers :code "mL" :range 5 :mass 8 :burden 1 :h1 any :d1 1 :cr 3000)))
+    multi-launcher (:name "Multi-Launcher" :category launchers :code "mL" :range 5 :mass 8 :burden 1 :h1 any :d1 1 :cr 3000)))
 
 (defvar *weapon-descriptors-table*
   '(anti-flyer (:code "aF")
