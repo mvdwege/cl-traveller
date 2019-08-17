@@ -4,12 +4,15 @@
   (:export 
    ;; Common functions
    :to-ehex :to-number :roll :flux :roll-on :flux-on
-   :interaction-required
+   :interaction-required :name-to-symbol :symbol-to-name
    ;; Worlds and systems
    :body :world :mainworld :asteroids :uwp :make-world
-   :star :primary-star :secondary-star :habitable-zone
+   :star :primary-star :secondary-star :habitable-zone :surface-orbit
+   :generate-subsector :sector :subsector
+   ;; Items
+   :item
    ;; Sophonts
-   :sophont-class :genetic-profile :sophont :c)
+   :sophont-class :genetic-profile :sophont :c :strength :dexterity :agility :grace :endurance :vigor :stamina :education :training :instinct :social-standing :charisma :caste :life-expectancy :age-up)
   (:shadow "safety"))
 
 
