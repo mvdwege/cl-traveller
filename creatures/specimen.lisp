@@ -252,14 +252,6 @@
                   (%mortal-illness-p specimen)) 'dead)
             ('ok)))))
 
-(defmethod age-up ((specimen sophont) &key (increase 1))
-  (unless (eql (health-status specimen) 'dead)
-    (incf (age specimen) increase)
-    (when (= (age specimen) (%next-aging-check specimen))
-      (check-aging specimen)
-      (setf (%next-aging-check specimen) (set-next-aging-check specimen)))
-    (age specimen)))
-
 (defmethod slot-unbound (class (specimen sophont) (slot (eql 'age)))
   "If age is not set, it will default to the start of Young Adult, the
 age of a starting character before Career Resolution. This will also set the next Aging Check to the start of Life Stage 5, Peak."
