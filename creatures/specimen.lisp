@@ -224,6 +224,8 @@
           *life-stages*)))))
 
 (defmethod check-aging ((specimen sophont))
+  (if (eql (health-status specimen) 'dead)
+      (return-from check-aging 'dead))
   (let ((affected-characteristics 0)
         (ch (characteristics specimen))
         (ch-indexes '(0 1 2))
@@ -242,10 +244,10 @@
           (incf affected-characteristics))))
     (setf (health-status specimen)
           (cond
-            ((eql affected-characteristics 2) 'major-illness)
+            ((eql affected-characteristics 2) 'serious-illness)
             ((and (eql affected-characteristics 3)
                   (not (%mortal-illness-p specimen)))
-             (setf (%mortal-illness-p specimen) t) 'etremely-major-illness)
+             (setf (%mortal-illness-p specimen) t) 'major-illness)
             ((and (eql affected-characteristics 3)
                   (%mortal-illness-p specimen)) 'dead)
             ('ok)))))
