@@ -25,7 +25,7 @@
    (genetics :accessor genetics)
    (gender :initarg :gender
 	   :reader gender)
-   (caste :accessor caste))
+   (caste :accessor caste :initform nil))
   (:metaclass sophont-class
               :documentation "Class to represent sophont individuals"))
 
@@ -194,14 +194,6 @@
 	  (mapcar #'+ (characteristics specimen) differences)))
   (gender specimen))
 
-(defmethod slot-unbound (class (specimen sophont) (slot (eql 'caste)))
-  (cond
-    ((not (caste-p (class-of specimen))) (setf (slot-value specimen 'caste) nil))
-    ((and (caste-p (class-of specimen))
-          (eql (caste-structure (class-of specimen))
-               'skilled)) (setf (slot-value specimen 'caste) (roll-on (roll-on (roll-on *caste-skills* :sides 3)))))
-    (t (setf (caste specimen) (nth (c specimen 5) (caste-table (class-of specimen)))))))
-
 ;;; Aging
 (defmethod life-expectancy ((specimen sophont))
   (life-expectancy (class-of specimen)))
@@ -305,6 +297,43 @@ age of a starting character before Career Resolution. This will also set the nex
                'skilled)) (setf (slot-value specimen 'caste) (roll-on (roll-on (roll-on *caste-skills* :sides 3)))))
     (t (setf (caste specimen) (nth (c specimen 5) (caste-table (class-of specimen)))))))
 
+(defmethod assign-caste ((specimen sophont))
+  ;; Only execute when we are a casted sophont species, and no caste
+  ;; has been set yet
+  (when (and (caste-p (class-of specimen))
+	     (not (caste specimen)))
+    ;; We have 3 conditions: life stage zero, life stage 2, and any
+    ;; life stage higher. Within those, we also have the possibility
+    ;; to throw an 'interaction-required error.
+    (let ((method (caste-assignment-method (class-of specimen)))
+	  (age-thresholds
+	   (mapcar
+	    #'(lambda (x) (+ 1 x))
+	    (cumulative-ages (life-stages (class-of specimen)))))
+	  (current-age (age specimen)))
+      (restart-case
+	  (cond
+	    ;; Newborn or older, but random assignment at Life Stage 0
+	    ((and
+	      (position method '(assigned-at-birth assigned-by-heredity assigned-by-community))
+	      (>= current-age 0)) (%random-caste specimen))
+	    ;; Assigned at Adolescence, and Adolescent or older, still random
+	    ((and
+	      (eql method 'assigned-at-adolescence)
+	      (>= current-age (nth 1 age-thresholds))) (%random-caste specimen))
+	    ;; What's left is interactive by default, if Adolescent or older
+	    ((>= current-age (nth 1 age-thresholds))
+	     (error 'interaction-required
+		    :what "Caste Assignment"
+		    :options (remove-duplicates (caste-table (class-of specimen))))))
+	(store-value (value)
+	  :interactive
+	  (lambda () (format *query-io* "~%Alternative: ") (list (read *query-io*)))
+	  (setf (caste specimen) value)))))
+  ;; Whatever else, always return caste.
+  (caste specimen))
+		 
+	      
 (defmethod (setf age) :around (new-age (specimen sophont))
   ;; Set new age, then run all checks necessary if the age is on a
   ;; stage boundary (Aging Checks, Caste Assignment and Caste shift,
