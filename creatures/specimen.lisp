@@ -31,7 +31,7 @@
 
 (defmethod initialize-instance :after ((specimen sophont) &key &allow-other-keys)
   (if (slot-boundp specimen 'age)
-      (setf (%next-aging-check specimen) (calculate-next-aging-check specimen))))
+      (setf (%next-aging-check specimen) (set-next-aging-check specimen))))
 
 ;;; Individual Characteristics
 (defmethod slot-unbound (class (specimen sophont) (slot (eql 'characteristics)))
@@ -234,7 +234,7 @@
       ((and (>= life-stage-index 9)
             (eql (nth 4 (characteristics (class-of specimen))) 'instinct))
        (append ch-indexes '(3 4)))
-      ((>= life-stage-index 9) (append ch-indexes '(3*))))
+      ((>= life-stage-index 9) (append ch-indexes '(3))))
     (dolist (n ch-indexes)
       (when (< (roll 2) life-stage-index)
         (when (eql (decf (nth n ch)) 0)
@@ -255,17 +255,17 @@
     (incf (age specimen) increase)
     (when (= (age specimen) (%next-aging-check specimen))
       (check-aging specimen)
-      (setf (%next-aging-check specimen) (calculate-next-aging-check specimen)))
+      (setf (%next-aging-check specimen) (set-next-aging-check specimen)))
     (age specimen)))
 
 (defmethod slot-unbound (class (specimen sophont) (slot (eql 'age)))
   "If age is not set, it will default to the start of Young Adult, the
 age of a starting character before Career Resolution. This will also set the next Aging Check to the start of Life Stage 5, Peak."
   (setf (age specimen) (+ 1 (nth 2 (cumulative-ages (life-stages (class-of specimen))))))
-  (setf (%next-aging-check specimen) (calculate-next-aging-check specimen))
+  (setf (%next-aging-check specimen) (set-next-aging-check specimen))
   (age specimen))
 
-(defmethod calculate-next-aging-check ((specimen sophont))
+(defmethod set-next-aging-check ((specimen sophont))
   (let ((life-stage (position (current-life-stage specimen) *life-stages*))
         (peak-start-age (+ (nth 4 (cumulative-ages (life-stages (class-of specimen)))) 1)))
     ;; We have three conditions: Life Stage is less than Peak, Life
@@ -307,4 +307,4 @@ age of a starting character before Career Resolution. This will also set the nex
   ;; After setting age, check for Caste Shift and recalculate and set
   ;; next Aging Check
   (caste-shift specimen)
-  (setf (%next-aging-check specimen) (calculate-next-aging-check specimen)))
+  (setf (%next-aging-check specimen) (set-next-aging-check specimen)))
