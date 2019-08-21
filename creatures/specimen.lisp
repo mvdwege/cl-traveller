@@ -297,8 +297,15 @@ age of a starting character before Career Resolution. This will also set the nex
       (t
        nil))))
 
-(defmethod (setf age) :after (age (specimen sophont))
-  ;; After setting age, check for Caste Shift and recalculate and set
-  ;; next Aging Check
-  (caste-shift specimen)
-  (setf (%next-aging-check specimen) (set-next-aging-check specimen)))
+(defmethod (setf age) :around (new-age (specimen sophont))
+  ;; Set new age, then run all checks necessary if the age is on a
+  ;; stage boundary (Aging Checks, Caste Assignment and Caste shift,
+  ;; Gender Assignment and Gender Shift).
+  (if (eql (health-status specimen) 'dead)
+      (error "~a is already dead" specimen))
+  (call-next-method)
+  (let ((methods '(set-next-aging-check
+		   caste-shift
+		   check-aging)))
+    (dolist (method methods)
+      (funcall method specimen))))
