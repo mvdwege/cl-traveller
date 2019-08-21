@@ -276,7 +276,7 @@ age of a starting character before Career Resolution. This will also set the nex
                  ((> current-age (age specimen)) current-age)
                 (incf current-age 4)))))))
 
-(defmethod caste-shift ((specimen sophont))
+(defmethod shift-caste ((specimen sophont))
   (let ((c (caste-shift-method (class-of specimen)))
 	(age-thresholds
 	 (mapcar
@@ -305,7 +305,7 @@ age of a starting character before Career Resolution. This will also set the nex
       (error "~a is already dead" specimen))
   (call-next-method)
   (let ((methods '(set-next-aging-check
-		   caste-shift
+		   shift-caste
 		   check-aging)))
     (dolist (method methods)
       (funcall method specimen))))
