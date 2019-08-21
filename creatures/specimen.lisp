@@ -297,6 +297,14 @@ age of a starting character before Career Resolution. This will also set the nex
       (t
        nil))))
 
+(defmethod %random-caste ((specimen sophont))
+    (cond
+    ((not (caste-p (class-of specimen))) (setf (slot-value specimen 'caste) nil))
+    ((and (caste-p (class-of specimen))
+          (eql (caste-structure (class-of specimen))
+               'skilled)) (setf (slot-value specimen 'caste) (roll-on (roll-on (roll-on *caste-skills* :sides 3)))))
+    (t (setf (caste specimen) (nth (c specimen 5) (caste-table (class-of specimen)))))))
+
 (defmethod (setf age) :around (new-age (specimen sophont))
   ;; Set new age, then run all checks necessary if the age is on a
   ;; stage boundary (Aging Checks, Caste Assignment and Caste shift,
