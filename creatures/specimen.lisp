@@ -282,7 +282,7 @@ age of a starting character before Career Resolution. This will also set the nex
        (if (eq (c specimen 5) 12)
 	    (setf (nth 5 (characteristics specimen)) 2)
 	    (incf (nth 5 (characteristics specimen))))
-       (if (eql (caste-structure specimen) 'skilled)
+       (if (eql (caste-structure (class-of specimen)) 'skilled)
 	    (roll-on (roll-on (roll-on *caste-skills*)))))
       ((and (eql c 'mid-life-shift) (eql (nth 5 age-thresholds) current-age))
        (setf (nth 5 (characteristics specimen)) (roll-on (caste-table (class-of specimen)))))
