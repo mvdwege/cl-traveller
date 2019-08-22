@@ -342,6 +342,7 @@ age of a starting character before Career Resolution. This will also set the nex
       (error "~a is already dead" specimen))
   (call-next-method)
   (let ((methods '(set-next-aging-check
+		   assign-caste
 		   shift-caste
 		   check-aging)))
     (dolist (method methods)
