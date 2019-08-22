@@ -96,10 +96,11 @@
     (if (eq basic-niche 'producer)
         (setf (slot-value creature 'locomotion) 'immobile))
     (setf (slot-value creature slot)
-          (list basic-niche
-                (flux-on
-                 (getf *ecological-niche* basic-niche)
-                 :dm (native-terrain-mod creature))))))
+	  (%validate-niche
+           (list basic-niche
+                 (flux-on
+                  (getf *ecological-niche* basic-niche)
+                  :dm (native-terrain-mod creature)))))))
 
 ;; If plain setting ecological-niche, make sure niche is sane. Should
 ;; work either as an accessor or with an initarg, so create a helper
@@ -132,10 +133,3 @@ specialized-niche)"
   (let ((validated-value (%validate-niche value)))
     (setf (niche creature) (car validated-value))
     (call-next-method validated-value creature)))
-
-(defmethod initialize-instance :after ((creature creature-class) &key ecological-niche &allow-other-keys)
-  ;; We're still initializing. To stop triggering slot-unbounds and
-  ;; :around methods, do an immediate setf slot-value.
-  (let ((validated-niche (%validate-niche ecological-niche)))
-    (setf (slot-value creature 'ecological-niche) validated-niche)
-    (setf (slot-value creature 'niche) (car validated-niche))))
