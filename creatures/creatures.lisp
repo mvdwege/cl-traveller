@@ -84,9 +84,10 @@
   (- (position (native-terrain creature) *terrain-types*) 5))
 
 (defmethod slot-unbound (class (creature creature-class) (slot (eql 'locomotion)))
-  (let ((row (+ 5 (native-terrain-mod creature)))
-        (column (roll 1 :dm (terrain-modifiers creature))))
-    (nth row (nth column *locomotion-types*))))
+  (setf (slot-value creature slot)
+	(let ((row (+ 5 (native-terrain-mod creature)))
+              (column (max 1 (min 6 (roll 1 :dm (terrain-modifiers creature))))))
+	  (nth row (nth column *locomotion-types*)))))
 
 (defmethod slot-unbound (class (creature creature-class) (slot (eql 'niche)))
   (setf (slot-value creature 'niche) (flux-on *basic-niche*)))
